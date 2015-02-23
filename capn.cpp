@@ -9,6 +9,8 @@ using namespace foo::bar::baz;
 void writeAddressBook(int fd) {
     ::capnp::MallocMessageBuilder message;
 
+
+
     AddressBook::Builder addressBook = message.initRoot<AddressBook>();
     ::capnp::List<Person>::Builder people = addressBook.initPeople(2);
 

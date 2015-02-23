@@ -1,0 +1,27 @@
+@0xdcd603dc2a8c780f;
+
+using Cxx = import "/capnp/c++.capnp";
+$Cxx.namespace("AUSA::protobuf");
+
+struct Header {
+    doubles @0 : List(DoubleSided);
+    singles @1 : List(SingleSided);
+    signals @2 : List(Signal);
+
+
+}
+
+struct DoubleSided {
+    name @0 : Text;
+    frontStrips @1 : UInt16;
+    backStrips @2 : UInt16;
+}
+
+struct SingleSided {
+    name @0 : Text;
+    strips @1 : UInt16;
+}
+
+struct Signal {
+    name @0 : Text;
+}
