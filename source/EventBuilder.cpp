@@ -1,33 +1,41 @@
 #include "buf/PackedEvent.capn.h"
 #include "buf/EventBuilder.h"
 
-
+#include <iostream>
+#include <utility>
+using namespace std;
 
 using namespace AUSA::protobuf;
 using namespace AUSA::Match;
 
 namespace {
-    UInt_t writeMul(const SetupOutput& output, ::capnp::List< ::uint8_t>::Builder builder) {
-        UInt_t sum = 0;
+    pair<UInt_t, UInt_t> writeMul(const SetupOutput& output, ::capnp::List< ::uint8_t>::Builder builder) {
+        UInt_t dSum = 0, sSum = 0;
         int dsdCount = output.dssdCount();
         for (int i = 0; i < dsdCount; i++) {
             UInt_t m = output.getDssdOutput(i).front().multiplicity();
-            sum += m;
-            builder.set(i, m);
+            dSum += m;
+            builder.set((unsigned int) i, (uint8_t) m);
         }
         
         for (int i = 0; i < output.singleCount(); i++) {
             UInt_t m = output.getSingleOutput(i).multiplicity();
-            builder.set(dsdCount+i, m);
-            sum += m;
+            builder.set((unsigned int) (dsdCount+i), (uint8_t) m);
+            sSum += m;
         }
-        return sum;
+        return make_pair(dSum, sSum);
     }
 
     void writeOutput(const int i, const CalibratedOutput& out , Data::Builder& builder) {
-        builder.setTime(out.time(i));
-        builder.setEnergy(out.energy(i));
-        builder.setStrip(out.segment(i));
+        uint16_t time = (uint16_t) out.time(i);
+        double energy = out.energy(i);
+        uint8_t segment = (uint8_t) out.segment(i);
+
+//        cout << "Write: (T, E, S) " << time << " " << energy << " " << to_string(segment) << endl;
+
+        builder.setTime(time);
+        builder.setEnergy(energy);
+        builder.setStrip(segment);
     }
 }
 
@@ -37,29 +45,47 @@ void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutpu
     auto mulList = event.initMul(output.dssdCount() + output.singleCount());
     auto mul = writeMul(output, mulList);
 
-    auto data = event.initData(mul);
+    auto doubleMul = mul.first; auto singleMul = mul.second;
+
+
+
+    auto data = event.initData(2*doubleMul+singleMul);
 
     size_t count = 0;
     for (size_t i = 0; i < output.dssdCount(); i++) {
         auto& out = output.getDssdOutput(i);
         for (size_t j = 0; j < mulList[i]; j++) {
             Data::Builder bf = data[count];
-            writeOutput(count, out.front(), bf);
+            writeOutput(j, out.front(), bf);
             Data::Builder bb = data[count+1];
-            writeOutput(count, out.back(), bb);
+            writeOutput(j, out.back(), bb);
 
             count+=2;
         }
     }
 
-    for (size_t i = 0; i < output.dssdCount(); i++) {
+//    if (doubleMul > 0) {
+//        cout << doubleMul << "\t" << singleMul << endl;
+//        auto reader = data.asReader();
+//        cout << "Reader!" << endl;
+//        for (auto r : reader) {
+//            cout << "Read: (T, E, S) " << r.getTime() << " " << r.getEnergy() << " " << to_string(r.getStrip()) << endl;
+//        }
+//        cout << endl;
+//    }
+    for (size_t i = 0; i < output.singleCount(); i++) {
         auto& out = output.getSingleOutput(i);
         for (size_t j = 0; j < mulList[i]; j++) {
             Data::Builder b = data[count];
-            writeOutput(count, out, b);
+            writeOutput(j, out, b);
 
             count+=1;
         }
+    }
+
+    auto signals = event.initSignal(output.signalCount());
+    for (size_t i = 0; i < output.signalCount(); i++) {
+        signals.set(i, output.getScalerOutput(i).getValue());
     }
 }
 

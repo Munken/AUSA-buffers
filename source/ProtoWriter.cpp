@@ -27,7 +27,11 @@ void ProtoWriter::terminate() {
     close(fd);
 }
 
+int writer_count = 0;
+
 void ProtoWriter::analyze() {
+//    if (writer_count++ > 100) return;
+
     MallocMessageBuilder builder;
     buildEvent(builder, output);
     writePackedMessageToFd(fd, builder);
