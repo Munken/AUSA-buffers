@@ -26,7 +26,7 @@ namespace {
         uint16_t t = reader.getTime();
         uint8_t segment = reader.getStrip();
 
-//        cout << energy << "\t" << to_string(t) << "\t" << to_string(segment) << endl;
+//        cout << output.detector().getName() << "\t" << energy << "\t" << to_string(t) << "\t" << to_string(segment) << endl;
 
         output.setEnergy(out, energy);
         output.setTime(out, t);
@@ -109,31 +109,30 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
                 read(j, f, data[count]);
                 read(j, b, data[count+1]);
 //                cout << endl;
+                count+=2;
             }
-            count+=2;
         }
 
-//        for (size_t i = 0; i < sCount; i++) {
-//            const auto m = mul[i+dCount];
-//            auto& f = output.getSingleOutput(i);
-//
-//            f.setMultiplicity(m);
-//
-//            for (size_t j = 0; j < m; j++) {
-//                Data::Reader reader = data[count];
-//                double energy = reader.getEnergy();
-//                uint16_t t = reader.getTime();
-//                uint8_t segment = reader.getStrip();
-//
-//                read(j, f, reader);
-//
-//                count++;
-//            }
-//        }
-//
-//        for (size_t i = 0; i < sigCount; i++) {
-//            output.getScalerOutput(i).setValue(sig[i]);
-//        }
+        for (size_t i = 0; i < sCount; i++) {
+            const auto m = mul[i+dCount];
+            auto& f = output.getSingleOutput(i);
+
+            f.setMultiplicity(m);
+
+            for (size_t j = 0; j < m; j++) {
+                Data::Reader reader = data[count];
+                double energy = reader.getEnergy();
+                uint16_t t = reader.getTime();
+                uint8_t segment = reader.getStrip();
+                read(j, f, reader);
+
+                count++;
+            }
+        }
+
+        for (size_t i = 0; i < sigCount; i++) {
+            output.getScalerOutput(i).setValue(sig[i]);
+        }
         provider.notifyAnalyze();
     }
     provider.notifyTerminate();

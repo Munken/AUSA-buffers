@@ -30,7 +30,7 @@ void ProtoWriter::terminate() {
 int writer_count = 0;
 
 void ProtoWriter::analyze() {
-//    if (writer_count++ > 100) return;
+//    if (writer_count++ > 100) {exit(1);};
 
     MallocMessageBuilder builder;
     buildEvent(builder, output);

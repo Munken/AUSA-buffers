@@ -23,6 +23,12 @@ namespace {
             builder.set((unsigned int) (dsdCount+i), (uint8_t) m);
             sSum += m;
         }
+
+//        for (int i = 0; i < output.dssdCount()+output.singleCount(); i++) {
+//            cout << to_string(builder[i]) << "\t";
+//        }
+//        cout << endl;
+
         return make_pair(dSum, sSum);
     }
 
@@ -47,8 +53,6 @@ void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutpu
 
     auto doubleMul = mul.first; auto singleMul = mul.second;
 
-
-
     auto data = event.initData(2*doubleMul+singleMul);
 
     size_t count = 0;
@@ -64,7 +68,18 @@ void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutpu
         }
     }
 
-//    if (doubleMul > 0) {
+    for (size_t i = 0; i < output.singleCount(); i++) {
+        auto& out = output.getSingleOutput(i);
+        for (size_t j = 0; j < mulList[i+output.dssdCount()]; j++) {
+            Data::Builder b = data[count];
+            writeOutput(j, out, b);
+
+            count+=1;
+        }
+    }
+
+
+//    if (doubleMul > 0 || singleMul > 0) {
 //        cout << doubleMul << "\t" << singleMul << endl;
 //        auto reader = data.asReader();
 //        cout << "Reader!" << endl;
@@ -73,15 +88,6 @@ void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutpu
 //        }
 //        cout << endl;
 //    }
-    for (size_t i = 0; i < output.singleCount(); i++) {
-        auto& out = output.getSingleOutput(i);
-        for (size_t j = 0; j < mulList[i]; j++) {
-            Data::Builder b = data[count];
-            writeOutput(j, out, b);
-
-            count+=1;
-        }
-    }
 
     auto signals = event.initSignal(output.signalCount());
     for (size_t i = 0; i < output.signalCount(); i++) {
