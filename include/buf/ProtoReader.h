@@ -6,7 +6,7 @@
 
 namespace AUSA {
     namespace protobuf {
-        void test(std::string path);
+        void test(std::string path, std::shared_ptr<Setup> setup);
     }
 }
 

@@ -15,9 +15,6 @@
 
 #include <ctime>
 
-void writeDummy(int fd);
-
-void print(int fd);
 
 using namespace AUSA::protobuf;
 using namespace AUSA::Match;
@@ -29,13 +26,13 @@ int main() {
 
         start = std::clock();
 
-//        MatchReader reader("matched/NaCla926_0m.root", s);
+        MatchReader reader("matched/NaCla926_0m.root", s);
 //        reader.attach(make_shared<ProtoWriter>("test.buf"));
-//        reader.run();
+        reader.run();
 
 
 
-        test("test.buf");
+//        test("test.buf", s);
         std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
 }
 
