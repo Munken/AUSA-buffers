@@ -10,7 +10,9 @@ using namespace AUSA::Match;
 namespace {
     void buildSingle(::AUSA::protobuf::SingleOutput::Builder& b, const CalibratedOutput& s) {
         auto mul = s.multiplicity();
+        if (mul < 1) return;
         b.setMul(mul);
+
 
         auto strips = b.initStrip(mul);
         auto E = b.initEnergy(mul);

@@ -28,14 +28,14 @@ int main() {
 
         start = std::clock();
 
-        /*auto s = AUSA::JSON::readSetupFromJSON("setup/setup.json");
-        MatchReader reader("matched/NaCla953m.root", s);
-//        reader.attach(make_shared<ProtoWriter>("test.buf"));
-        reader.run();*/
+        auto s = AUSA::JSON::readSetupFromJSON("setup/setup.json");
+        MatchReader reader("matched/NaCla926_0m.root", s);
+        reader.attach(make_shared<ProtoWriter>("test.buf"));
+        reader.run();
 
 
 
-        test("test.buf");
+//        test("test.buf");
         std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
 }
 

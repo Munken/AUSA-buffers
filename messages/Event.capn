@@ -17,10 +17,10 @@ struct DoubleOutput {
 struct SingleOutput {
     mul    @0 : UInt8;
     strip  @1 : List(UInt8);
-    energy @2 : List(Float64);
+    energy @2 : List(Float32);
     tdc    @3 : List(UInt16);
 }
 
 struct SignalOutput {
-    value @0 : UInt16;
+    value @0 : UInt32;
 }

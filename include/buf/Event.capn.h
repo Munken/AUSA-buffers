@@ -304,7 +304,7 @@ public:
   inline  ::capnp::List< ::uint8_t>::Reader getStrip() const;
 
   inline bool hasEnergy() const;
-  inline  ::capnp::List<double>::Reader getEnergy() const;
+  inline  ::capnp::List<float>::Reader getEnergy() const;
 
   inline bool hasTdc() const;
   inline  ::capnp::List< ::uint16_t>::Reader getTdc() const;
@@ -349,12 +349,12 @@ public:
   inline ::capnp::Orphan< ::capnp::List< ::uint8_t>> disownStrip();
 
   inline bool hasEnergy();
-  inline  ::capnp::List<double>::Builder getEnergy();
-  inline void setEnergy( ::capnp::List<double>::Reader value);
-  inline void setEnergy(::kj::ArrayPtr<const double> value);
-  inline  ::capnp::List<double>::Builder initEnergy(unsigned int size);
-  inline void adoptEnergy(::capnp::Orphan< ::capnp::List<double>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<double>> disownEnergy();
+  inline  ::capnp::List<float>::Builder getEnergy();
+  inline void setEnergy( ::capnp::List<float>::Reader value);
+  inline void setEnergy(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float>::Builder initEnergy(unsigned int size);
+  inline void adoptEnergy(::capnp::Orphan< ::capnp::List<float>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float>> disownEnergy();
 
   inline bool hasTdc();
   inline  ::capnp::List< ::uint16_t>::Builder getTdc();
@@ -407,7 +407,7 @@ public:
   }
 #endif  // !CAPNP_LITE
 
-  inline  ::uint16_t getValue() const;
+  inline  ::uint32_t getValue() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -437,8 +437,8 @@ public:
   inline ::kj::StringTree toString() const { return asReader().toString(); }
 #endif  // !CAPNP_LITE
 
-  inline  ::uint16_t getValue();
-  inline void setValue( ::uint16_t value);
+  inline  ::uint32_t getValue();
+  inline void setValue( ::uint32_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -694,33 +694,33 @@ inline bool SingleOutput::Reader::hasEnergy() const {
 inline bool SingleOutput::Builder::hasEnergy() {
   return !_builder.getPointerField(1 * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List<double>::Reader SingleOutput::Reader::getEnergy() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List<double>>::get(
+inline  ::capnp::List<float>::Reader SingleOutput::Reader::getEnergy() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float>>::get(
       _reader.getPointerField(1 * ::capnp::POINTERS));
 }
-inline  ::capnp::List<double>::Builder SingleOutput::Builder::getEnergy() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<double>>::get(
+inline  ::capnp::List<float>::Builder SingleOutput::Builder::getEnergy() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float>>::get(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
-inline void SingleOutput::Builder::setEnergy( ::capnp::List<double>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<double>>::set(
+inline void SingleOutput::Builder::setEnergy( ::capnp::List<float>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float>>::set(
       _builder.getPointerField(1 * ::capnp::POINTERS), value);
 }
-inline void SingleOutput::Builder::setEnergy(::kj::ArrayPtr<const double> value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<double>>::set(
+inline void SingleOutput::Builder::setEnergy(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float>>::set(
       _builder.getPointerField(1 * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List<double>::Builder SingleOutput::Builder::initEnergy(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List<double>>::init(
+inline  ::capnp::List<float>::Builder SingleOutput::Builder::initEnergy(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float>>::init(
       _builder.getPointerField(1 * ::capnp::POINTERS), size);
 }
 inline void SingleOutput::Builder::adoptEnergy(
-    ::capnp::Orphan< ::capnp::List<double>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<double>>::adopt(
+    ::capnp::Orphan< ::capnp::List<float>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float>>::adopt(
       _builder.getPointerField(1 * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List<double>> SingleOutput::Builder::disownEnergy() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<double>>::disown(
+inline ::capnp::Orphan< ::capnp::List<float>> SingleOutput::Builder::disownEnergy() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float>>::disown(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
 
@@ -760,17 +760,17 @@ inline ::capnp::Orphan< ::capnp::List< ::uint16_t>> SingleOutput::Builder::disow
       _builder.getPointerField(2 * ::capnp::POINTERS));
 }
 
-inline  ::uint16_t SignalOutput::Reader::getValue() const {
-  return _reader.getDataField< ::uint16_t>(
+inline  ::uint32_t SignalOutput::Reader::getValue() const {
+  return _reader.getDataField< ::uint32_t>(
       0 * ::capnp::ELEMENTS);
 }
 
-inline  ::uint16_t SignalOutput::Builder::getValue() {
-  return _builder.getDataField< ::uint16_t>(
+inline  ::uint32_t SignalOutput::Builder::getValue() {
+  return _builder.getDataField< ::uint32_t>(
       0 * ::capnp::ELEMENTS);
 }
-inline void SignalOutput::Builder::setValue( ::uint16_t value) {
-  _builder.setDataField< ::uint16_t>(
+inline void SignalOutput::Builder::setValue( ::uint32_t value) {
+  _builder.setDataField< ::uint32_t>(
       0 * ::capnp::ELEMENTS, value);
 }
 
