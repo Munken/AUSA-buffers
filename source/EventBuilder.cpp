@@ -1,54 +1,67 @@
-#include "buf/Event.capn.h"
+#include "buf/PackedEvent.capn.h"
 #include "buf/EventBuilder.h"
 
-#include <capnp/message.h>
-#include <match/output.h>
+
 
 using namespace AUSA::protobuf;
 using namespace AUSA::Match;
 
 namespace {
-    void buildSingle(::AUSA::protobuf::SingleOutput::Builder& b, const CalibratedOutput& s) {
-        auto mul = s.multiplicity();
-        if (mul < 1) return;
-        b.setMul(mul);
+    UInt_t writeMul(const SetupOutput& output, ::capnp::List< ::uint8_t>::Builder builder) {
+        UInt_t sum = 0;
+        int dsdCount = output.dssdCount();
+        for (int i = 0; i < dsdCount; i++) {
+            UInt_t m = output.getDssdOutput(i).front().multiplicity();
+            sum += m;
+            builder.set(i, m);
+        }
+        
+        for (int i = 0; i < output.singleCount(); i++) {
+            UInt_t m = output.getSingleOutput(i).multiplicity();
+            builder.set(dsdCount+i, m);
+            sum += m;
+        }
+        return sum;
+    }    
+}
 
+void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutput &output) {
+    auto event = builder.initRoot<PackedEvent>();
 
-        auto strips = b.initStrip(mul);
-        auto E = b.initEnergy(mul);
-        auto tdc = b.initTdc(mul);
+    auto mulList = event.initMul(output.dssdCount() + output.singleCount());
+    auto mul = writeMul(output, mulList);
 
-        for (int i = 0; i < mul; i++) {
-            strips.set(i, s.segment(i));
-            E.set(i, s.energy(i));
-            tdc.set(i, s.time(i));
+    auto E = event.initEnergy(mul);
+    auto t = event.initTime(mul);
+    auto s = event.initStrip(mul);
+
+    size_t count = 0;
+    for (size_t i = 0; i < output.dssdCount(); i++) {
+        auto& out = output.getDssdOutput(i);
+        for (size_t j = 0; j < mulList[i]; j++) {
+            E.set(count, out.front().energy(j));
+            E.set(count+1, out.back().energy(j));
+
+            t.set(count, out.front().time(j));
+            t.set(count+1, out.back().time(j));
+
+            s.set(count, out.front().segment(j));
+            s.set(count+1, out.back().segment(j));
+
+            count+=2;
+        }
+    }
+
+    for (size_t i = 0; i < output.dssdCount(); i++) {
+        auto& out = output.getSingleOutput(i);
+        for (size_t j = 0; j < mulList[i]; j++) {
+            E.set(count, out.energy(j));
+            t.set(count, out.time(j));
+            s.set(count, out.segment(j));
+
+            count+=1;
         }
     }
 }
 
-void ::AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutput &output) {
-    auto event = builder.initRoot<Event>();
 
-    auto doubles = event.initDoubleOutput(output.dssdCount());
-    for (size_t i = 0; i < doubles.size(); i++) {
-        auto& out = output.getDssdOutput(i);
-
-        DoubleOutput::Builder b = doubles[0];
-        SingleOutput::Builder front = b.getFront();
-        buildSingle(front, out.front());
-        SingleOutput::Builder back = b.getBack();
-        buildSingle(back, out.back());
-    }
-
-    auto singles = event.initSingleOutput(output.singleCount());
-    for (size_t i = 0; i < singles.size(); i++) {
-        SingleOutput::Builder builder = singles[0];
-        buildSingle(builder, output.getSingleOutput(i));
-    }
-
-    auto signals = event.initSignalOutput(output.signalCount());
-    for (size_t i = 0; i < signals.size(); i++) {
-        SignalOutput::Builder builder = signals[0];
-        builder.setValue(output.getScalerOutput(i).getValue());
-    }
-}

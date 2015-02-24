@@ -1,6 +1,7 @@
 #ifndef BUF_PROTO_READER_H
 #define BUF_PROTO_READER_H
 
+#include <setup/Setup.h>
 #include <string>
 
 namespace AUSA {

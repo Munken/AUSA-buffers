@@ -24,18 +24,18 @@ using namespace AUSA::Match;
 using namespace std;
 
 int main() {
+        auto s = AUSA::JSON::readSetupFromJSON("setup/setup.json");
         std::clock_t    start;
 
         start = std::clock();
 
-        auto s = AUSA::JSON::readSetupFromJSON("setup/setup.json");
-        MatchReader reader("matched/NaCla926_0m.root", s);
-        reader.attach(make_shared<ProtoWriter>("test.buf"));
-        reader.run();
+//        MatchReader reader("matched/NaCla926_0m.root", s);
+//        reader.attach(make_shared<ProtoWriter>("test.buf"));
+//        reader.run();
 
 
 
-//        test("test.buf");
+        test("test.buf");
         std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
 }
 

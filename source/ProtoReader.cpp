@@ -9,7 +9,10 @@
 #include <capnp/serialize-packed.h>
 #include <buf/Event.capn.h>
 
+#include <setup/Setup.h>
+
 using namespace AUSA::protobuf;
+using namespace AUSA;
 using namespace std;
 
 void ::AUSA::protobuf::test(std::string path) {
