@@ -22,7 +22,13 @@ namespace {
             sum += m;
         }
         return sum;
-    }    
+    }
+
+    void writeOutput(const int i, const CalibratedOutput& out , Data::Builder& builder) {
+        builder.setTime(out.time(i));
+        builder.setEnergy(out.energy(i));
+        builder.setStrip(out.segment(i));
+    }
 }
 
 void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutput &output) {
@@ -31,22 +37,16 @@ void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutpu
     auto mulList = event.initMul(output.dssdCount() + output.singleCount());
     auto mul = writeMul(output, mulList);
 
-    auto E = event.initEnergy(mul);
-    auto t = event.initTime(mul);
-    auto s = event.initStrip(mul);
+    auto data = event.initData(mul);
 
     size_t count = 0;
     for (size_t i = 0; i < output.dssdCount(); i++) {
         auto& out = output.getDssdOutput(i);
         for (size_t j = 0; j < mulList[i]; j++) {
-            E.set(count, out.front().energy(j));
-            E.set(count+1, out.back().energy(j));
-
-            t.set(count, out.front().time(j));
-            t.set(count+1, out.back().time(j));
-
-            s.set(count, out.front().segment(j));
-            s.set(count+1, out.back().segment(j));
+            Data::Builder bf = data[count];
+            writeOutput(count, out.front(), bf);
+            Data::Builder bb = data[count+1];
+            writeOutput(count, out.back(), bb);
 
             count+=2;
         }
@@ -55,9 +55,8 @@ void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutpu
     for (size_t i = 0; i < output.dssdCount(); i++) {
         auto& out = output.getSingleOutput(i);
         for (size_t j = 0; j < mulList[i]; j++) {
-            E.set(count, out.energy(j));
-            t.set(count, out.time(j));
-            s.set(count, out.segment(j));
+            Data::Builder b = data[count];
+            writeOutput(count, out, b);
 
             count+=1;
         }

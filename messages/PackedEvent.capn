@@ -3,9 +3,13 @@
 struct PackedEvent {
     mul @0 : List(UInt8);
 
-    energy @1 : List(Float64);
-    strip  @2 : List(UInt8);
-    time   @3 : List(UInt16);
+    data @1 : List(Data);
 
-    signal @4 : List(UInt32);
+    signal @2 : List(UInt32);
+}
+
+struct Data {
+    energy @0 : Float64;
+    strip  @1 : UInt8;
+    time   @2 : UInt16;
 }

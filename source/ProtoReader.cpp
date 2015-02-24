@@ -18,6 +18,14 @@ using namespace AUSA::protobuf;
 using namespace AUSA::Match;
 using namespace std;
 
+namespace {
+    void read(uint8_t out, CalibratedOutput &output, Data::Reader reader) {
+        output.setEnergy(out, reader.getEnergy());
+        output.setTime(out, reader.getTime());
+        output.setSegment(out, reader.getStrip());
+    }
+}
+
 void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
 
     SetupOutput output;
@@ -61,11 +69,7 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
 
         auto evt = message.getRoot<PackedEvent>();
         auto mul = evt.getMul();
-        auto E = evt.getEnergy();
-        auto s = evt.getStrip();
-        auto t = evt.getTime();
-
-
+        auto data = evt.getData();
         size_t count = 0;
 
         for (size_t i = 0; i < dCount; i++) {
@@ -77,17 +81,10 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
             f.setMultiplicity(m);
             b.setMultiplicity(m);
             for (uint8_t j = 0; j < m; j++) {
-                f.setEnergy(j, E[count]);
-                b.setEnergy(j, E[count+1]);
-
-                f.setTime(j, t[count]);
-                b.setTime(j, t[count+1]);
-
-                f.setSegment(j, s[count]);
-                b.setSegment(j, s[count+1]);
-
-                count+=2;
+                read(j, f, data[count]);
+                read(j, b, data[count+1]);
             }
+            count+=2;
         }
 
         for (size_t i = 0; i < sCount; i++) {
@@ -97,9 +94,7 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
             f.setMultiplicity(m);
 
             for (size_t j = 0; j < m; j++) {
-                f.setEnergy(j, E[count]);
-                f.setTime(j, t[count]);
-                f.setSegment(j, s[count]);
+                read(j, f, data[count]);
 
                 count++;
             }
