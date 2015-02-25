@@ -3,16 +3,29 @@
 #include "buf/HeaderBuilder.h"
 
 #include <fcntl.h>
-#include <capnp/message.h>
-#include <capnp/serialize-packed.h>
 
+#include <iostream>
+using namespace std;
 
 using namespace AUSA::Match;
 using namespace AUSA::protobuf;
 using namespace capnp;
 
-ProtoWriter::ProtoWriter(std::string path) {
-    fd = open(path.c_str(), O_RDWR|O_CREAT, 0777);
+ProtoWriter::ProtoWriter(std::string path) :
+        fd(open(path.c_str(), O_RDWR|O_CREAT, 0664)) {
+
+    fdStream = new kj::FdOutputStream(fd);
+    bufferedStream = new kj::BufferedOutputStreamWrapper(*fdStream);
+}
+
+ProtoWriter::~ProtoWriter() {
+    try {
+        if (bufferedStream != nullptr) delete bufferedStream;
+        if (fdStream != nullptr) delete fdStream;
+    }
+    catch (...) {
+
+    }
 }
 
 void ProtoWriter::setup(const CalibratedSetupOutput &output) {
@@ -20,7 +33,7 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 
     MallocMessageBuilder builder;
     buildHeader(builder, output);
-    writePackedMessageToFd(fd, builder);
+    writePackedMessage(*bufferedStream, builder);
 }
 
 void ProtoWriter::terminate() {
@@ -34,7 +47,8 @@ void ProtoWriter::analyze() {
 
     MallocMessageBuilder builder;
     buildEvent(builder, output);
-    writePackedMessageToFd(fd, builder);
+    writePackedMessage(*bufferedStream, builder);
 }
+
 
 

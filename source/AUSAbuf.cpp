@@ -32,12 +32,12 @@ int main() {
 
         start = std::clock();
 
-//        MatchReader reader("../Na23ap/matched/NaCla926_0m.root", s);
-////        reader.attach(make_shared<ProtoWriter>("test.buf"));
+        MatchReader reader("../Na23ap/matched/NaCla926_0m.root", s);
+        reader.attach(make_shared<ProtoWriter>("test.buf"));
 //        reader.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
-//        reader.run();
+        reader.run();
 
-        test("test.buf", s);
+//        test("test.buf", s);
         double ms = (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000);
 //        std::cout << "Time: " << ms << " ms" << std::endl;
         cout << ms << endl;

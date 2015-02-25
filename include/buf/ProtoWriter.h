@@ -2,12 +2,15 @@
 #define BUF_PROTO_WRITER_H
 
 #include <match/analyzer/AbstractCalibratedAnalyzer.h>
+#include <capnp/serialize-packed.h>
+
 
 namespace AUSA {
     namespace protobuf {
         class ProtoWriter : public Match::AbstractCalibratedAnalyzer {
         public:
             ProtoWriter(std::string path);
+            ~ProtoWriter();
 
             virtual void setup(Match::CalibratedSetupOutput const &output) override;
 
@@ -17,6 +20,9 @@ namespace AUSA {
 
         private:
             int fd;
+
+            kj::FdOutputStream* fdStream;
+            kj::BufferedOutputStreamWrapper* bufferedStream;
         };
     }
 }
