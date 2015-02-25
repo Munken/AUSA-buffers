@@ -65,8 +65,12 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
 
     int fd = open(path.c_str(), O_RDONLY);
 
+    auto N = 50;
+    capnp::byte* buffer = new capnp::byte[4096*N];
+    kj::ArrayPtr<capnp::byte> p(buffer, 4096*N);
+
     kj::FdInputStream fdStream(fd);
-    kj::BufferedInputStreamWrapper bufferedStream(fdStream);
+    kj::BufferedInputStreamWrapper bufferedStream(fdStream, p);
 
     if (bufferedStream.tryGetReadBuffer() != nullptr) {
         ::capnp::PackedMessageReader message(bufferedStream);

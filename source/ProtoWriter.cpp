@@ -15,7 +15,13 @@ ProtoWriter::ProtoWriter(std::string path) :
         fd(open(path.c_str(), O_RDWR|O_CREAT, 0664)) {
 
     fdStream = new kj::FdOutputStream(fd);
-    bufferedStream = new kj::BufferedOutputStreamWrapper(*fdStream);
+
+    auto N = 20;
+    byte* buffer = new byte[4096*N];
+    kj::ArrayPtr<byte> p(buffer, 4096*N);
+    bufferedStream = new kj::BufferedOutputStreamWrapper(*fdStream, p);
+
+    cout << bufferedStream->getWriteBuffer().size() << endl;
 }
 
 ProtoWriter::~ProtoWriter() {
@@ -37,6 +43,7 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 }
 
 void ProtoWriter::terminate() {
+    bufferedStream ->flush();
     close(fd);
 }
 

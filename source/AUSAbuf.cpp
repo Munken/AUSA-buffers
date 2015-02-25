@@ -32,9 +32,9 @@ int main() {
 
         start = std::clock();
 
-        MatchReader reader("../Na23ap/matched/NaCla926_0m.root", s);
-        reader.attach(make_shared<ProtoWriter>("test.buf"));
-//        reader.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
+        MatchReader reader("../Na23ap/matched/NaCla953m.root", s);
+//        reader.attach(make_shared<ProtoWriter>("test.buf"));
+        reader.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
         reader.run();
 
 //        test("test.buf", s);
