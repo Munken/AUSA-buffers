@@ -3,8 +3,6 @@ project(protobuf)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "/home/munk/AUSA/protobuf")
-
 include_directories("include")
 include_directories("../AUSAlib/include")
 include_directories("../AUSAlib/external/include")
@@ -19,9 +17,10 @@ file(GLOB_RECURSE SRC_
         "source/*.c++"
     )
 
-set(AUSA /home/munk/.clion10/system/cmake/generated/2875045f/2875045f/RelWithDebInfo/libAUSA.a)
+set(AUSA /home/munk/.clion10/system/cmake/generated/2875045f/2875045f/Release/libAUSA.a)
 
-add_executable(AUSAbuf  ${SRC_})
-target_link_libraries(AUSAbuf capnp kj)
-target_link_libraries(AUSAbuf ${AUSA})
-target_link_libraries(AUSAbuf ${ROOT_LIBRARIES})
+add_executable(BufTest  source/AUSAbuf.cpp)
+add_library(AUSAbuf  ${SRC_})
+
+target_link_libraries(AUSAbuf capnp kj ${AUSA} ${ROOT_LIBRARIES})
+target_link_libraries(BufTest AUSAbuf capnp kj ${AUSA} ${ROOT_LIBRARIES})
