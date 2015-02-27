@@ -9,28 +9,25 @@ using namespace AUSA::protobuf;
 using namespace kj;
 using namespace std;
 
-LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
-    LZ4F_decompressionContext_t* context = new LZ4F_decompressionContext_t();
-    LZ4F_frameInfo_t* frame = new LZ4F_frameInfo_t();
-    auto err = LZ4F_createDecompressionContext(context, LZ4F_VERSION);
-    if (LZ4F_isError(err)) {
-        cerr << "Failed to create decompression context due to: " << LZ4F_getErrorName(err) << endl;
-        throw;
+namespace {
+    unsigned readInt(byte* ptr) {
+        return *((unsigned*) ptr);
     }
+}
 
-    auto buffer = heapArray<byte>(8 << 10);
-    size_t size;
-    auto readRet = inner.read(buffer.begin(), 1, buffer.size());
-    cout << readRet << endl;
+LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
+    auto writeBuffer = heapArray<byte>(100);
+    auto out = inner.read(writeBuffer.begin(), 1, writeBuffer.size());
 
-    for (int i = 0; i < readRet; i++) cout << buffer[i];
-    cout << endl;
+    cout << out << endl;
+    cout << readInt(writeBuffer.begin()) << endl;
+    unsigned int bufferSize = readInt(writeBuffer.begin()+4);
+    unsigned int decomSize =
+    cout << bufferSize << endl;
 
-    auto lzErr = LZ4F_getFrameInfo(context, frame, buffer.begin(), &size);
+    stream = LZ4_createStreamDecode();
 
-    cout << lzErr << endl;
-    cout << LZ4F_getErrorName(lzErr) << endl;
-    cout << size << endl;
+    heapArray()
 }
 
 size_t LZ4InputStream::tryRead(void *buffer, size_t minBytes, size_t maxBytes) {

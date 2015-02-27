@@ -2,6 +2,7 @@
 #define BUF_LZ4_INPUT_STREAM_H
 
 #include <kj/io.h>
+#include <lz4.h>
 
 namespace AUSA {
     namespace protobuf {
@@ -15,6 +16,7 @@ namespace AUSA {
 
         private:
             InputStream& inner;
+            LZ4_streamDecode_t* stream;
         };
     }
 }

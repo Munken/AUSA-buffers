@@ -2,7 +2,7 @@
 #define BUF_LZ4_OUTPUT_STREAM_H
 
 #include <kj/io.h>
-#include <lz4frame.h>
+#include <lz4.h>
 
 
 namespace AUSA {
@@ -42,12 +42,14 @@ namespace AUSA {
             virtual kj::ArrayPtr<kj::byte> getWriteBuffer() override;
 
         private:
-            LZ4F_preferences_t preferences;
-
+//            LZ4F_preferences_t preferences;
+            LZ4_stream_t* stream;
+//
             const size_t BUFFER_SIZE;
             size_t OUTPUT_SIZE;
-
-            kj::Array<kj::byte> writeBuffer, outputBuffer;
+//
+            kj::Array<kj::byte> writeBuffer[2], outputBuffer;
+            kj::ArrayPtr<kj::byte> activeBuffer;
             kj::byte* bufferPos;
 
             kj::OutputStream& inner;

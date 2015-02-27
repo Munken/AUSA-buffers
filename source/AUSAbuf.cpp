@@ -48,6 +48,7 @@ void lz4Test() {
 //
 //        lz4OutputStream.flush();
 //
+//        close(fd);
         kj::FdInputStream fdInputStream(fd);
         LZ4InputStream lz4(fdInputStream);
 
