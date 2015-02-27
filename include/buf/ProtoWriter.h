@@ -22,7 +22,7 @@ namespace AUSA {
             int fd;
 
             kj::FdOutputStream* fdStream;
-            kj::BufferedOutputStreamWrapper* bufferedStream;
+            kj::BufferedOutputStream* bufferedStream;
         };
     }
 }

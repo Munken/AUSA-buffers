@@ -5,6 +5,8 @@
 #include <fcntl.h>
 
 #include <iostream>
+#include <buf/LZ4OutputStream.h>
+
 using namespace std;
 
 using namespace AUSA::Match;
@@ -20,18 +22,11 @@ ProtoWriter::ProtoWriter(std::string path) :
     byte* buffer = new byte[4096*N];
     kj::ArrayPtr<byte> p(buffer, 4096*N);
     bufferedStream = new kj::BufferedOutputStreamWrapper(*fdStream, p);
-
-    cout << bufferedStream->getWriteBuffer().size() << endl;
+//    bufferedStream = new LZ4OutputStream(*fdStream);
 }
 
 ProtoWriter::~ProtoWriter() {
-    try {
-        if (bufferedStream != nullptr) delete bufferedStream;
-        if (fdStream != nullptr) delete fdStream;
-    }
-    catch (...) {
 
-    }
 }
 
 void ProtoWriter::setup(const CalibratedSetupOutput &output) {
@@ -43,8 +38,14 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 }
 
 void ProtoWriter::terminate() {
-    bufferedStream ->flush();
-    close(fd);
+    try {
+        if (bufferedStream != nullptr) delete bufferedStream;
+        if (fdStream != nullptr) delete fdStream;
+        close(fd);
+    }
+    catch (...) {
+        cerr << "Big trouble deleting ProtoWriter" << endl;
+    }
 }
 
 int writer_count = 0;

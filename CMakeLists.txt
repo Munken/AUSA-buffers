@@ -17,10 +17,10 @@ file(GLOB_RECURSE SRC_
         "source/*.c++"
     )
 
-set(AUSA /home/munk/.clion10/system/cmake/generated/2875045f/2875045f/Release/libAUSA.a)
+set(AUSA /home/munk/.clion10/system/cmake/generated/2875045f/2875045f/Release0/libAUSA.a)
 
 add_executable(BufTest  source/AUSAbuf.cpp)
 add_library(AUSAbuf  ${SRC_})
 
-target_link_libraries(AUSAbuf capnp kj ${AUSA} ${ROOT_LIBRARIES})
-target_link_libraries(BufTest AUSAbuf capnp kj ${AUSA} ${ROOT_LIBRARIES})
+target_link_libraries(AUSAbuf capnp kj ${AUSA} ${ROOT_LIBRARIES} lz4)
+target_link_libraries(BufTest AUSAbuf)
