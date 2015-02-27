@@ -3,11 +3,13 @@
 
 #include <match/analyzer/AbstractCalibratedAnalyzer.h>
 #include <capnp/serialize-packed.h>
+#include "LZ4OutputStream.h"
 
 
 namespace AUSA {
     namespace protobuf {
-        class ProtoWriter : public Match::AbstractCalibratedAnalyzer {
+        class
+        ProtoWriter : public Match::AbstractCalibratedAnalyzer {
         public:
             ProtoWriter(std::string path);
             ~ProtoWriter();
@@ -22,7 +24,7 @@ namespace AUSA {
             int fd;
 
             kj::FdOutputStream* fdStream;
-            kj::BufferedOutputStream* bufferedStream;
+            LZ4OutputStream* bufferedStream;
         };
     }
 }

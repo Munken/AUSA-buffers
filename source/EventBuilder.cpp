@@ -24,11 +24,6 @@ namespace {
             sSum += m;
         }
 
-//        for (int i = 0; i < output.dssdCount()+output.singleCount(); i++) {
-//            cout << to_string(builder[i]) << "\t";
-//        }
-//        cout << endl;
-
         return make_pair(dSum, sSum);
     }
 

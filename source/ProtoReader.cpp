@@ -15,6 +15,7 @@
 #include <match/analyzer/CalibratedAnalyzer.h>
 #include <AUSA.h>
 #include <match/analyzer/SegmentSpectrumPlotter.h>
+#include <buf/LZ4InputStream.h>
 
 using namespace AUSA::protobuf;
 using namespace AUSA::Match;
@@ -70,7 +71,8 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
     kj::ArrayPtr<capnp::byte> p(buffer, 4096*N);
 
     kj::FdInputStream fdStream(fd);
-    kj::BufferedInputStreamWrapper bufferedStream(fdStream, p);
+//    kj::BufferedInputStreamWrapper bufferedStream(fdStream, p);
+    LZ4InputStream bufferedStream(fdStream);
 
     if (bufferedStream.tryGetReadBuffer() != nullptr) {
         ::capnp::PackedMessageReader message(bufferedStream);

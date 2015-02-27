@@ -35,21 +35,18 @@ LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
 
     auto bufferSize = readInt(tmpBuffer.begin()) + FRAME_HEADER_SIZE;
     auto decompressedSize = LZ4_COMPRESSBOUND(bufferSize);
+
     nextFrameSize = readInt(tmpBuffer.begin() + FRAME_HEADER_SIZE);
 
     stream = LZ4_createStreamDecode();
 
     compressedBuffer = heapArray<byte>(bufferSize);
     decompressedBuffer = heapArray<byte>(decompressedSize);
-
-    auto ret = readCompressed();
-    for (int i = 0; i < ret; i++) cout << decompressedBuffer[i];
-    cout << endl;
-    auto ret2 = readCompressed();
-    for (int i = 0; i < ret2; i++) cout << decompressedBuffer[i];
 }
 
 size_t LZ4InputStream::readCompressed() {
+    if (nextFrameSize == 0) return 0;
+
     auto compressedSize = inner.tryRead(compressedBuffer.begin(), nextFrameSize, readSize(nextFrameSize));
     auto decompressedSize = LZ4_decompress_safe_continue(stream, (char const *) compressedBuffer.begin(), (char *) decompressedBuffer.begin(), nextFrameSize, (int) decompressedBuffer.size());
 
@@ -60,7 +57,7 @@ size_t LZ4InputStream::readCompressed() {
         nextFrameSize = 0;
     }
 
-    return static_cast<size_t>(decompressedSize);
+    return (size_t) decompressedSize;
 }
 
 
@@ -89,7 +86,7 @@ size_t LZ4InputStream::tryRead(void *dst, size_t minBytes, size_t maxBytes) {
         } else {
             // Forward large read to the underlying stream.
             cerr << "Currently unsupported!" << endl;
-            throw;
+            exit(42);
 //            bufferAvailable = nullptr;
 //            return fromFirstBuffer + inner.read(dst, minBytes, maxBytes);
         }
@@ -98,7 +95,8 @@ size_t LZ4InputStream::tryRead(void *dst, size_t minBytes, size_t maxBytes) {
 
 kj::ArrayPtr<kj::byte const> LZ4InputStream::tryGetReadBuffer() {
     if (bufferAvailable.size() == 0) {
-        size_t n = inner.tryRead(decompressedBuffer.begin(), 1, decompressedBuffer.size());
+//        size_t n = inner.tryRead(decompressedBuffer.begin(), 1, decompressedBuffer.size());
+        size_t n = readCompressed();
         bufferAvailable = decompressedBuffer.slice(0, n);
     }
     return bufferAvailable;

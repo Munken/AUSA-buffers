@@ -49,6 +49,9 @@ void LZ4OutputStream::write(const void *src, size_t size) {
             memcpy(activeBuffer.begin(), src, size);
             bufferPos = activeBuffer.begin() + size;
         } else {
+
+            cout << "Warning ! using else !" << endl;
+
             // Fill current buffer and write out.
             memcpy(bufferPos, src, available);
             compressAndWrite();
@@ -76,6 +79,7 @@ kj::ArrayPtr<kj::byte> LZ4OutputStream::getWriteBuffer() {
 
 void LZ4OutputStream::flush() {
     if (bufferPos > activeBuffer.begin()) {
+        cout << "flushing" << endl;
         compressAndWrite(activeBuffer.begin(), bufferPos - activeBuffer.begin());
         bufferPos = activeBuffer.begin();
     }
@@ -85,6 +89,11 @@ void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
     auto compressedSize = LZ4_compress_continue(stream, static_cast<const char*>(src), (char*)(outputBuffer.begin() + sizeof(unsigned)), (int) size);
     writeInt(outputBuffer.begin(), compressedSize);
     inner.write(outputBuffer.begin(), compressedSize+sizeof(unsigned));
+
+//    for (int i = 0; i < size; i++) cout << to_string(reinterpret_cast<const byte*>(src)[i]) << " ";
+//    cout << endl;
+//    for (int i = 4; i < compressedSize+4; i++) cout << to_string(outputBuffer[i]) << " ";
+//    cout << endl;
 
     if (activeBuffer == writeBuffer[0])
         activeBuffer = writeBuffer[1];

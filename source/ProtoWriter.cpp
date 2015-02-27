@@ -39,6 +39,7 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 
 void ProtoWriter::terminate() {
     try {
+        bufferedStream->flush();
         if (bufferedStream != nullptr) delete bufferedStream;
         if (fdStream != nullptr) delete fdStream;
         close(fd);
