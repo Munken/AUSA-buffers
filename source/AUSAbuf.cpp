@@ -20,6 +20,7 @@
 #include <lz4frame.h>
 #include <lz4.h>
 #include <buf/LZ4OutputStream.h>
+#include <buf/LZ4InputStream.h>
 
 void bufTest();
 
@@ -30,17 +31,27 @@ using namespace AUSA::Match;
 using namespace std;
 
 int main() {
-        bufTest();
-//        lz4Test();
+//        bufTest();
+        lz4Test();
 }
 
 void lz4Test() {
         int fd = open("test.lz4", O_RDWR|O_CREAT, 0664);
-        kj::FdOutputStream fdStream(fd);
-        LZ4OutputStream stream(fdStream);
 
-        const char* buff;
-        stream.write(&buff, (8 << 20) +100);
+//        string test = "HestPestPestKostMest";
+//        char* buffer = new char[test.length()];
+//        memcpy(buffer, test.c_str(), test.size());
+//
+//        kj::FdOutputStream fdOutputStream(fd);
+//        LZ4OutputStream lz4OutputStream(fdOutputStream);
+//        lz4OutputStream.write(buffer, test.length());
+//
+//        lz4OutputStream.flush();
+//
+        kj::FdInputStream fdInputStream(fd);
+        LZ4InputStream lz4(fdInputStream);
+
+
 }
 
 void bufTest() {
