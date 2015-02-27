@@ -13,39 +13,100 @@ namespace {
     unsigned readInt(byte* ptr) {
         return *((unsigned*) ptr);
     }
+
+    auto UNSIGNED_SIZE = 4U;
+    auto HEADER_SIZE = 2U*UNSIGNED_SIZE;
+    auto FRAME_HEADER_SIZE = 1U*UNSIGNED_SIZE;
+
+    size_t readSize(size_t compressedSize) {
+        return compressedSize + FRAME_HEADER_SIZE;
+    }
+
 }
 
 LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
-    auto writeBuffer = heapArray<byte>(8);
-    auto out = inner.read(writeBuffer.begin(), 1, 8);
+    auto tmpBuffer = heapArray<byte>(HEADER_SIZE);
+    auto out = inner.tryRead(tmpBuffer.begin(), HEADER_SIZE, HEADER_SIZE);
 
-    cout << out << endl;
-    unsigned int bufferSize = readInt(writeBuffer.begin());
-    unsigned int decomSize = LZ4_COMPRESSBOUND(bufferSize);
-    unsigned int frameSize = readInt(writeBuffer.begin() + 4);
-    cout << bufferSize << endl;
-    cout << decomSize << endl;
-    cout << frameSize << endl;
+    if (out < HEADER_SIZE) {
+        cerr << "Premature end of file !" << endl;
+        throw;
+    }
+
+    auto bufferSize = readInt(tmpBuffer.begin()) + FRAME_HEADER_SIZE;
+    auto decompressedSize = LZ4_COMPRESSBOUND(bufferSize);
+    nextFrameSize = readInt(tmpBuffer.begin() + FRAME_HEADER_SIZE);
 
     stream = LZ4_createStreamDecode();
 
-    kj::Array<byte> compressed = heapArray<byte>(bufferSize);
-    kj::Array<byte> decompressed = heapArray<byte>(decomSize);
+    compressedBuffer = heapArray<byte>(bufferSize);
+    decompressedBuffer = heapArray<byte>(decompressedSize);
 
-    auto innerRet = inner.read(compressed.begin(), frameSize, frameSize);
-    cout << innerRet << endl;
-    auto ret = LZ4_decompress_safe_continue(stream, (char const *) compressed.begin(), (char *) decompressed.begin(), frameSize, decomSize);
-    cout << ret << endl;
-
-    for (int i = 0; i < ret; i++) cout << decompressed[i];
+    auto ret = readCompressed();
+    for (int i = 0; i < ret; i++) cout << decompressedBuffer[i];
+    cout << endl;
+    auto ret2 = readCompressed();
+    for (int i = 0; i < ret2; i++) cout << decompressedBuffer[i];
 }
 
-size_t LZ4InputStream::tryRead(void *buffer, size_t minBytes, size_t maxBytes) {
-    return 0;
+size_t LZ4InputStream::readCompressed() {
+    auto compressedSize = inner.tryRead(compressedBuffer.begin(), nextFrameSize, readSize(nextFrameSize));
+    auto decompressedSize = LZ4_decompress_safe_continue(stream, (char const *) compressedBuffer.begin(), (char *) decompressedBuffer.begin(), nextFrameSize, (int) decompressedBuffer.size());
+
+    if (compressedSize == readSize(nextFrameSize)) {
+        nextFrameSize = readInt(compressedBuffer.begin() + nextFrameSize);
+    }
+    else {
+        nextFrameSize = 0;
+    }
+
+    return static_cast<size_t>(decompressedSize);
+}
+
+
+size_t LZ4InputStream::tryRead(void *dst, size_t minBytes, size_t maxBytes) {
+    if (minBytes <= bufferAvailable.size()) {
+        // Serve from current buffer.
+        size_t n = std::min(bufferAvailable.size(), maxBytes);
+        memcpy(dst, bufferAvailable.begin(), n);
+        bufferAvailable = bufferAvailable.slice(n, bufferAvailable.size());
+        return n;
+    } else {
+        // Copy current available into destination.
+        memcpy(dst, bufferAvailable.begin(), bufferAvailable.size());
+        size_t fromFirstBuffer = bufferAvailable.size();
+        dst = reinterpret_cast<byte*>(dst) + fromFirstBuffer;
+        minBytes -= fromFirstBuffer;
+        maxBytes -= fromFirstBuffer;
+        if (maxBytes <= decompressedBuffer.size()) {
+            // Read the next buffer-full.
+            size_t n = readCompressed();
+
+            size_t fromSecondBuffer = std::min(n, maxBytes);
+            memcpy(dst, decompressedBuffer.begin(), fromSecondBuffer);
+            bufferAvailable = decompressedBuffer.slice(fromSecondBuffer, n);
+            return fromFirstBuffer + fromSecondBuffer;
+        } else {
+            // Forward large read to the underlying stream.
+            cerr << "Currently unsupported!" << endl;
+            throw;
+//            bufferAvailable = nullptr;
+//            return fromFirstBuffer + inner.read(dst, minBytes, maxBytes);
+        }
+    }
 }
 
 kj::ArrayPtr<kj::byte const> LZ4InputStream::tryGetReadBuffer() {
+    if (bufferAvailable.size() == 0) {
+        size_t n = inner.tryRead(decompressedBuffer.begin(), 1, decompressedBuffer.size());
+        bufferAvailable = decompressedBuffer.slice(0, n);
+    }
+    return bufferAvailable;
+}
 
+
+LZ4InputStream::~LZ4InputStream() {
+    if (stream != nullptr) LZ4_freeStreamDecode(stream);
 }
 
 

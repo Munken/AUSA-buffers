@@ -9,6 +9,7 @@ namespace AUSA {
         class LZ4InputStream : public kj::BufferedInputStream {
         public:
             LZ4InputStream(InputStream& inner);
+            ~LZ4InputStream();
 
             virtual size_t tryRead(void *buffer, size_t minBytes, size_t maxBytes);
 
@@ -16,7 +17,12 @@ namespace AUSA {
 
         private:
             InputStream& inner;
+            kj::Array<kj::byte> compressedBuffer, decompressedBuffer;
+            kj::ArrayPtr<kj::byte> bufferAvailable;
             LZ4_streamDecode_t* stream;
+            unsigned nextFrameSize;
+
+            size_t readCompressed();
         };
     }
 }

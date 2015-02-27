@@ -31,8 +31,8 @@ using namespace AUSA::Match;
 using namespace std;
 
 int main() {
-//        bufTest();
-        lz4Test();
+        bufTest();
+//        lz4Test();
 }
 
 void lz4Test() {
@@ -43,8 +43,9 @@ void lz4Test() {
 //        memcpy(buffer, test.c_str(), test.size());
 //
 //        kj::FdOutputStream fdOutputStream(fd);
-//        LZ4OutputStream lz4OutputStream(fdOutputStream);
+//        LZ4OutputStream lz4OutputStream(fdOutputStream, 0, 16);
 //        lz4OutputStream.write(buffer, 16);
+//        lz4OutputStream.write(buffer+8, 16);
 //
 //        lz4OutputStream.flush();
 //

@@ -23,7 +23,7 @@ LZ4OutputStream::LZ4OutputStream(OutputStream &inner, unsigned compressionLevel,
     activeBuffer = writeBuffer[0];
     bufferPos = activeBuffer.begin();
 
-    writeInt(bufferPos, BUFFER_SIZE);
+    writeInt(bufferPos, BUFFER_SIZE+4);
     inner.write(bufferPos, sizeof(unsigned));
 }
 
@@ -84,7 +84,6 @@ void LZ4OutputStream::flush() {
 void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
     auto compressedSize = LZ4_compress_continue(stream, static_cast<const char*>(src), (char*)(outputBuffer.begin() + sizeof(unsigned)), (int) size);
     writeInt(outputBuffer.begin(), compressedSize);
-    cout << compressedSize << endl;
     inner.write(outputBuffer.begin(), compressedSize+sizeof(unsigned));
 
     if (activeBuffer == writeBuffer[0])
