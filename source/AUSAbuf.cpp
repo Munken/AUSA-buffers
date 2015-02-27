@@ -38,13 +38,13 @@ int main() {
 void lz4Test() {
         int fd = open("test.lz4", O_RDWR|O_CREAT, 0664);
 
-//        string test = "HestPestPestKostMest";
+//        string test = "HestPestPestKostMestMegaPestHest";
 //        char* buffer = new char[test.length()];
 //        memcpy(buffer, test.c_str(), test.size());
 //
 //        kj::FdOutputStream fdOutputStream(fd);
 //        LZ4OutputStream lz4OutputStream(fdOutputStream);
-//        lz4OutputStream.write(buffer, test.length());
+//        lz4OutputStream.write(buffer, 16);
 //
 //        lz4OutputStream.flush();
 //

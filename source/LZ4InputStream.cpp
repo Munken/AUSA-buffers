@@ -16,18 +16,28 @@ namespace {
 }
 
 LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
-    auto writeBuffer = heapArray<byte>(100);
-    auto out = inner.read(writeBuffer.begin(), 1, writeBuffer.size());
+    auto writeBuffer = heapArray<byte>(8);
+    auto out = inner.read(writeBuffer.begin(), 1, 8);
 
     cout << out << endl;
-    cout << readInt(writeBuffer.begin()) << endl;
-    unsigned int bufferSize = readInt(writeBuffer.begin()+4);
-    unsigned int decomSize =
+    unsigned int bufferSize = readInt(writeBuffer.begin());
+    unsigned int decomSize = LZ4_COMPRESSBOUND(bufferSize);
+    unsigned int frameSize = readInt(writeBuffer.begin() + 4);
     cout << bufferSize << endl;
+    cout << decomSize << endl;
+    cout << frameSize << endl;
 
     stream = LZ4_createStreamDecode();
 
-    heapArray()
+    kj::Array<byte> compressed = heapArray<byte>(bufferSize);
+    kj::Array<byte> decompressed = heapArray<byte>(decomSize);
+
+    auto innerRet = inner.read(compressed.begin(), frameSize, frameSize);
+    cout << innerRet << endl;
+    auto ret = LZ4_decompress_safe_continue(stream, (char const *) compressed.begin(), (char *) decompressed.begin(), frameSize, decomSize);
+    cout << ret << endl;
+
+    for (int i = 0; i < ret; i++) cout << decompressed[i];
 }
 
 size_t LZ4InputStream::tryRead(void *buffer, size_t minBytes, size_t maxBytes) {
