@@ -39,6 +39,9 @@ void lz4Test() {
         int fd = open("test.lz4", O_RDWR|O_CREAT, 0664);
         kj::FdOutputStream fdStream(fd);
         LZ4OutputStream stream(fdStream);
+
+        const char* buff;
+        stream.write(&buff, (8 << 20) +100);
 }
 
 void bufTest() {
