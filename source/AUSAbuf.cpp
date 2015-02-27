@@ -1,5 +1,4 @@
 #include "buf/Header.capn.h"
-#include "buf/Event.capn.h"
 #include "match/MatchReader.h"
 #include "json/IO.h"
 #include <capnp/message.h>
