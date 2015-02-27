@@ -26,7 +26,7 @@ namespace AUSA {
             const size_t BUFFER_SIZE;
             size_t OUTPUT_SIZE;
 
-            kj::ArrayPtr<kj::byte> writeBuffer, outputBuffer;
+            kj::Array<kj::byte> writeBuffer, outputBuffer;
             kj::byte* bufferPos;
 
             kj::OutputStream& inner;

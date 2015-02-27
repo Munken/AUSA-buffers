@@ -5,12 +5,14 @@
 #include "buf/LZ4OutputStream.h"
 
 #include <iostream>
+#include <G__ci_fproto.h>
+
 using namespace std;
 
 using namespace AUSA::protobuf;
 using namespace kj;
 
-LZ4OutputStream::LZ4OutputStream(OutputStream &inner) : BUFFER_SIZE(4*4096), inner(inner) {
+LZ4OutputStream::LZ4OutputStream(OutputStream &inner) : BUFFER_SIZE(8 << 20), inner(inner) {
     LZ4F_frameInfo_t& fInfo = preferences.frameInfo;
     fInfo.contentChecksumFlag = contentChecksumEnabled;
     fInfo.blockSizeID = LZ4F_default;
@@ -42,7 +44,7 @@ void LZ4OutputStream::write(const void *src, size_t size) {
         bufferPos += size;
         bufEqSrc++;
     }
-    else {
+    else { // MessageWriter using it's internal slow buffer.
         size_t available = writeBuffer.end() - bufferPos;
         if (size <= available) {
             memcpy(bufferPos, src, size);
@@ -51,18 +53,23 @@ void LZ4OutputStream::write(const void *src, size_t size) {
         } else if (size <= writeBuffer.size()) {
             // Too much for this buffer, but not a full buffer's worth, so we'll go ahead and copy.
             memcpy(bufferPos, src, available);
-            inner.write(writeBuffer.begin(), writeBuffer.size());
+
+            auto compressedSize = LZ4F_compressFrame(outputBuffer.begin(), OUTPUT_SIZE, writeBuffer.begin(), BUFFER_SIZE, &preferences);
+
+            inner.write(outputBuffer.begin(), compressedSize);
             size -= available;
             src = reinterpret_cast<const byte*>(src) + available;
             memcpy(writeBuffer.begin(), src, size);
             bufferPos = writeBuffer.begin() + size;
-            sizeLessThan++;
         } else {
+            cout << size / writeBuffer.size() << endl;
+            cerr << "Not supported for LZ4 buffer" << endl;
+            exit(42);
             // Writing so much data that we might as well write directly to avoid a copy.
-            inner.write(writeBuffer.begin(), bufferPos - writeBuffer.begin());
+            /*inner.write(writeBuffer.begin(), bufferPos - writeBuffer.begin());
             bufferPos = writeBuffer.begin();
             inner.write(src, size);
-            sizeToBig++;
+            sizeToBig++;*/
         }
     }
 }

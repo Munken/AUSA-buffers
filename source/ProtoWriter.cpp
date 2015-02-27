@@ -21,8 +21,8 @@ ProtoWriter::ProtoWriter(std::string path) :
     auto N = 20;
     byte* buffer = new byte[4096*N];
     kj::ArrayPtr<byte> p(buffer, 4096*N);
-    bufferedStream = new kj::BufferedOutputStreamWrapper(*fdStream, p);
-//    bufferedStream = new LZ4OutputStream(*fdStream);
+//    bufferedStream = new kj::BufferedOutputStreamWrapper(*fdStream, p);
+    bufferedStream = new LZ4OutputStream(*fdStream);
 }
 
 ProtoWriter::~ProtoWriter() {
