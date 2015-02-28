@@ -3,6 +3,7 @@
 
 #include <kj/io.h>
 #include <lz4.h>
+#include <lz4hc.h>
 
 
 namespace AUSA {
@@ -44,6 +45,7 @@ namespace AUSA {
         private:
 //            LZ4F_preferences_t preferences;
             LZ4_stream_t* stream;
+            LZ4_streamHC_t* hc;
 //
             const size_t BUFFER_SIZE;
             size_t OUTPUT_SIZE;

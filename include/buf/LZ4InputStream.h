@@ -3,6 +3,7 @@
 
 #include <kj/io.h>
 #include <lz4.h>
+#include <lz4hc.h>
 
 namespace AUSA {
     namespace protobuf {

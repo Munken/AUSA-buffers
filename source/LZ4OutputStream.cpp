@@ -13,6 +13,7 @@ namespace {
 
 LZ4OutputStream::LZ4OutputStream(OutputStream &inner, unsigned compressionLevel, size_t chunkSize) : BUFFER_SIZE(chunkSize), inner(inner) {
     stream = LZ4_createStream();
+    hc = LZ4_createStreamHC();
 
     OUTPUT_SIZE = LZ4_COMPRESSBOUND(BUFFER_SIZE) + sizeof(unsigned);
 
@@ -86,7 +87,8 @@ void LZ4OutputStream::flush() {
 }
 
 void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
-    auto compressedSize = LZ4_compress_continue(stream, static_cast<const char*>(src), (char*)(outputBuffer.begin() + sizeof(unsigned)), (int) size);
+//    auto compressedSize = LZ4_compress_continue(stream, static_cast<const char*>(src), (char*)(outputBuffer.begin() + sizeof(unsigned)), (int) size);
+    auto compressedSize = LZ4_compressHC_continue(hc, static_cast<const char*>(src), (char*)(outputBuffer.begin() + sizeof(unsigned)), (int) size);
     writeInt(outputBuffer.begin(), compressedSize);
     inner.write(outputBuffer.begin(), compressedSize+sizeof(unsigned));
 
