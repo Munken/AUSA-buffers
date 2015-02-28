@@ -1,12 +1,13 @@
 #include "buf/ProtoWriter.h"
 #include "buf/EventBuilder.h"
 #include "buf/HeaderBuilder.h"
-
-#include <fcntl.h>
-
-#include <iostream>
 #include <buf/LZ4OutputStream.h>
 
+#include <fcntl.h>
+#include <capnp/serialize-packed.h>
+
+
+#include <iostream>
 using namespace std;
 
 using namespace AUSA::Match;
@@ -17,12 +18,11 @@ ProtoWriter::ProtoWriter(std::string path) :
         fd(open(path.c_str(), O_RDWR|O_CREAT, 0664)) {
 
     fdStream = new kj::FdOutputStream(fd);
+    bufferedStream = new LZ4OutputStream(*fdStream, 0, 4 << 20);
+    buffer = kj::heapArray<word>(1024);
 
-    auto N = 20;
-    byte* buffer = new byte[4096*N];
-    kj::ArrayPtr<byte> p(buffer, 4096*N);
-//    bufferedStream = new kj::BufferedOutputStreamWrapper(*fdStream, p);
-    bufferedStream = new LZ4OutputStream(*fdStream);
+    // Nasty hack to zero output array.
+    std::fill(reinterpret_cast<uint64_t*>(buffer.begin()), reinterpret_cast<uint64_t*>(buffer.end()), 0);
 }
 
 ProtoWriter::~ProtoWriter() {
@@ -39,7 +39,6 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 
 void ProtoWriter::terminate() {
     try {
-        bufferedStream->flush();
         if (bufferedStream != nullptr) delete bufferedStream;
         if (fdStream != nullptr) delete fdStream;
         close(fd);
@@ -49,12 +48,8 @@ void ProtoWriter::terminate() {
     }
 }
 
-int writer_count = 0;
-
 void ProtoWriter::analyze() {
-//    if (writer_count++ > 100) {exit(1);};
-
-    MallocMessageBuilder builder;
+    MallocMessageBuilder builder{buffer};
     buildEvent(builder, output);
     writePackedMessage(*bufferedStream, builder);
 }

@@ -2,8 +2,8 @@
 #define BUF_PROTO_WRITER_H
 
 #include <match/analyzer/AbstractCalibratedAnalyzer.h>
-#include <capnp/serialize-packed.h>
 #include "LZ4OutputStream.h"
+#include <capnp/common.h>
 
 
 namespace AUSA {
@@ -25,6 +25,8 @@ namespace AUSA {
 
             kj::FdOutputStream* fdStream;
             LZ4OutputStream* bufferedStream;
+
+            kj::Array<capnp::word> buffer;
         };
     }
 }
