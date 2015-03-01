@@ -46,8 +46,8 @@ namespace AUSA {
             virtual kj::ArrayPtr<kj::byte> getWriteBuffer() override;
 
         private:
-            struct StreamState;
-            std::unique_ptr<StreamState> state;
+            class LZ4Wrapper;
+            std::unique_ptr<LZ4Wrapper> state;
 
             const size_t BUFFER_SIZE;
 
