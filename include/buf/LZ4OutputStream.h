@@ -2,12 +2,15 @@
 #define BUF_LZ4_OUTPUT_STREAM_H
 
 #include <kj/io.h>
-#include <lz4.h>
-#include <lz4hc.h>
+#include <memory>
 
 
 namespace AUSA {
     namespace protobuf {
+        enum class LZ4CompressionLevel {
+            DEFAULT, FAST, HIGH_COMPRESSION
+        };
+
         class LZ4OutputStream : public kj::BufferedOutputStream {
         public:
 
@@ -15,7 +18,7 @@ namespace AUSA {
             * Construct an output stream that will be LZ4 compressed on the fly.
             * With the default parameters it will use the fast LZ4 compression and a chunk size of 8 MB.
             */
-            explicit LZ4OutputStream(kj::OutputStream& inner, unsigned compressionLevel = 0, size_t chunkSize = 8 << 20 /*8 MB*/);
+            explicit LZ4OutputStream(kj::OutputStream &inner, LZ4CompressionLevel compressionLevel = LZ4CompressionLevel::DEFAULT , size_t chunkSize = 8 << 20 /*8 MB*/);
 
             /**
             * This will flush the output to the underlying output stream.
@@ -43,13 +46,11 @@ namespace AUSA {
             virtual kj::ArrayPtr<kj::byte> getWriteBuffer() override;
 
         private:
-//            LZ4F_preferences_t preferences;
-            LZ4_stream_t* stream;
-            LZ4_streamHC_t* hc;
-//
+            struct StreamState;
+            std::unique_ptr<StreamState> state;
+
             const size_t BUFFER_SIZE;
-            size_t OUTPUT_SIZE;
-//
+
             kj::Array<kj::byte> writeBuffer[2], outputBuffer;
             kj::ArrayPtr<kj::byte> activeBuffer;
             kj::byte* bufferPos;

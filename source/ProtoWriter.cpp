@@ -18,8 +18,8 @@ ProtoWriter::ProtoWriter(std::string path) :
         fd(open(path.c_str(), O_RDWR|O_CREAT, 0664)) {
 
     fdStream = new kj::FdOutputStream(fd);
-    bufferedStream = new LZ4OutputStream(*fdStream, 0, 4 << 20);
-    buffer = kj::heapArray<word>(1024);
+    bufferedStream = new LZ4OutputStream(*fdStream, LZ4CompressionLevel::DEFAULT);
+    buffer = kj::heapArray<word>(50);
 
     // Nasty hack to zero output array.
     std::fill(reinterpret_cast<uint64_t*>(buffer.begin()), reinterpret_cast<uint64_t*>(buffer.end()), 0);
@@ -51,6 +51,8 @@ void ProtoWriter::terminate() {
 void ProtoWriter::analyze() {
     MallocMessageBuilder builder{buffer};
     buildEvent(builder, output);
+//    auto p = builder.getSegmentsForOutput();
+    // Size of message can be determined from p[0].size() if message have only one segment.
     writePackedMessage(*bufferedStream, builder);
 }
 

@@ -1,4 +1,9 @@
 #include "buf/LZ4OutputStream.h"
+
+#include <lz4.h>
+#include <lz4hc.h>
+#include <AUSA.h>
+
 #include "iostream"
 using namespace std;
 
@@ -9,13 +14,24 @@ namespace {
     void writeInt(byte* ptr, size_t number) {
         *((unsigned*) ptr) = static_cast<unsigned>(number);
     }
+
+
 }
 
-LZ4OutputStream::LZ4OutputStream(OutputStream &inner, unsigned compressionLevel, size_t chunkSize) : BUFFER_SIZE(chunkSize), inner(inner) {
-    stream = LZ4_createStream();
-    hc = LZ4_createStreamHC();
+struct LZ4OutputStream::StreamState {
+    LZ4_stream_t* fast;
+    LZ4_streamHC_t* hc;
 
-    OUTPUT_SIZE = LZ4_COMPRESSBOUND(BUFFER_SIZE) + sizeof(unsigned);
+    LZ4CompressionLevel level;
+
+    ~StreamState() {
+        if (fast) LZ4_freeStream(fast);
+        if (hc) LZ4_freeHC(hc);
+    }
+};
+
+LZ4OutputStream::LZ4OutputStream(OutputStream &inner, LZ4CompressionLevel compressionLevel, size_t chunkSize) : BUFFER_SIZE(chunkSize), inner(inner) {
+    auto OUTPUT_SIZE = LZ4_COMPRESSBOUND(BUFFER_SIZE) + sizeof(unsigned);
 
     writeBuffer[0] = heapArray<byte>(BUFFER_SIZE);
     writeBuffer[1] = heapArray<byte>(BUFFER_SIZE);
@@ -26,6 +42,15 @@ LZ4OutputStream::LZ4OutputStream(OutputStream &inner, unsigned compressionLevel,
 
     writeInt(bufferPos, BUFFER_SIZE+4);
     inner.write(bufferPos, sizeof(unsigned));
+
+    state = std::make_unique<StreamState>();
+    state ->level = compressionLevel;
+
+    if (state -> level == LZ4CompressionLevel::HIGH_COMPRESSION) {
+        state -> hc = LZ4_createStreamHC();
+    } else {
+        state -> fast = LZ4_createStream();
+    }
 }
 
 
@@ -50,8 +75,6 @@ void LZ4OutputStream::write(const void *src, size_t size) {
             memcpy(activeBuffer.begin(), src, size);
             bufferPos = activeBuffer.begin() + size;
         } else {
-
-            cout << "Warning ! using else !" << endl;
 
             // Fill current buffer and write out.
             memcpy(bufferPos, src, available);
@@ -80,27 +103,27 @@ kj::ArrayPtr<kj::byte> LZ4OutputStream::getWriteBuffer() {
 
 void LZ4OutputStream::flush() {
     if (bufferPos > activeBuffer.begin()) {
-        cout << "flushing" << endl;
         compressAndWrite(activeBuffer.begin(), bufferPos - activeBuffer.begin());
         bufferPos = activeBuffer.begin();
     }
 }
 
 void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
-//    auto compressedSize = LZ4_compress_continue(stream, static_cast<const char*>(src), (char*)(outputBuffer.begin() + sizeof(unsigned)), (int) size);
-    auto compressedSize = LZ4_compressHC_continue(hc, static_cast<const char*>(src), (char*)(outputBuffer.begin() + sizeof(unsigned)), (int) size);
+    int compressedSize;
+    const char* castSource = static_cast<const char*>(src);
+    char*destination = reinterpret_cast<char*>(outputBuffer.begin() + sizeof(unsigned));
+
+
+    if (state->level == LZ4CompressionLevel::HIGH_COMPRESSION) {
+        compressedSize = LZ4_compressHC_continue(state->hc, castSource, destination, static_cast<int>(size));
+    } else {
+        compressedSize = LZ4_compress_continue(state->fast, castSource, destination, static_cast<int>(size));
+    }
+
     writeInt(outputBuffer.begin(), compressedSize);
     inner.write(outputBuffer.begin(), compressedSize+sizeof(unsigned));
 
-//    for (int i = 0; i < size; i++) cout << to_string(reinterpret_cast<const byte*>(src)[i]) << " ";
-//    cout << endl;
-//    for (int i = 4; i < compressedSize+4; i++) cout << to_string(outputBuffer[i]) << " ";
-//    cout << endl;
-
-    if (activeBuffer == writeBuffer[0])
-        activeBuffer = writeBuffer[1];
-    else
-        activeBuffer = writeBuffer[0];
+    activeBuffer = (activeBuffer == writeBuffer[0]) ? writeBuffer[1] : writeBuffer[0];
 }
 
 void LZ4OutputStream::compressAndWrite() {
