@@ -1,21 +1,42 @@
 #include "buf/LZ4InputStream.h"
-#include "buf/AUSALZ4.h"
 
 #include <iostream>
+#include <xxhash.h>
+#include <lz4.h>
 
 using namespace AUSA::protobuf;
+using namespace AUSA::protobuf::LZ4;
 using namespace kj;
 using namespace std;
 
 namespace {
-    unsigned readInt(byte* ptr, size_t offset) {
-        return *((unsigned*) (ptr + offset));
+    uint32_t readInt(byte* ptr, size_t offset) {
+        return *((uint32_t*) (ptr + offset));
+    }
+
+    uint64_t readHash(byte* ptr, size_t offset) {
+        return *((uint64_t*) (ptr + offset));
     }
 
     size_t readSize(size_t compressedSize) {
         return compressedSize + FRAME_HEADER_SIZE;
     }
 }
+
+class LZ4InputStream::StreamState {
+public:
+    LZ4_streamDecode_t* stream;
+    LZ4::Size_t nextFrameSize;
+    LZ4::Hash_t lastHash;
+
+    StreamState() {
+        stream = LZ4_createStreamDecode();
+    }
+
+    ~StreamState() {
+        if (stream != nullptr) LZ4_freeStreamDecode(stream);
+    }
+};
 
 LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
     size_t initialHeaderSize = HEADER_SIZE + FRAME_HEADER_SIZE;
@@ -27,27 +48,42 @@ LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
         throw;
     }
 
+    uint32_t magic = readInt(tmpBuffer.begin(), MAGIC_WORD_OFFSET);
+    if (magic != MAGIC_WORD) {
+        cerr << "First 32 bits are not " << MAGIC_WORD << "." << endl
+        << "Somthing is very wrong !" << endl;
+        throw;
+    }
+
     auto bufferSize = readInt(tmpBuffer.begin(), BUFFER_OFFSET);
     auto decompressedSize = LZ4_COMPRESSBOUND(bufferSize) + FRAME_HEADER_SIZE;
 
-    nextFrameSize = readInt(tmpBuffer.begin(), FIRST_FRAME_OFFSET+FRAME_SIZE_OFFSET);
-
-    stream = LZ4_createStreamDecode();
+    state-> nextFrameSize = readInt(tmpBuffer.begin(), FIRST_FRAME_OFFSET+FRAME_SIZE_OFFSET);
+    state-> lastHash = readHash(tmpBuffer.begin(), FIRST_FRAME_OFFSET+FRAME_HASH_OFFSET);
 
     compressedBuffer = heapArray<byte>(bufferSize);
     decompressedBuffer = heapArray<byte>(decompressedSize);
 }
 
 size_t LZ4InputStream::readCompressed() {
-    if (nextFrameSize == 0) return 0;
+    if (state-> nextFrameSize == 0) return 0;
 
-    auto compressedSize = inner.tryRead(compressedBuffer.begin(), nextFrameSize, readSize(nextFrameSize));
-    auto decompressedSize = LZ4_decompress_safe_continue(stream, (char const *) compressedBuffer.begin(), (char *) decompressedBuffer.begin(), nextFrameSize, (int) decompressedBuffer.size());
+    auto compressedSize = inner.tryRead(compressedBuffer.begin(), state-> nextFrameSize, readSize(state-> nextFrameSize));
+    auto decompressedSize = LZ4_decompress_safe_continue(state-> stream, (char const *) compressedBuffer.begin(), (char *) decompressedBuffer.begin(), state-> nextFrameSize, (int) decompressedBuffer.size());
 
-    if (compressedSize == readSize(nextFrameSize)) {
-        nextFrameSize = readInt(compressedBuffer.begin(), nextFrameSize);
+    auto hash = XXH64(decompressedBuffer.begin(), decompressedSize, 0);
+
+    if (hash != state-> lastHash) {
+        cerr << "Hash value of chunk don't correspond to recorded value." << endl
+             << "This is most likely due to data corruption!" << endl;
+        throw;
+    }
+
+    state-> lastHash = readHash(compressedBuffer.begin(), state-> nextFrameSize + FRAME_HASH_OFFSET);
+    if (compressedSize == readSize(state-> nextFrameSize)) {
+        state-> nextFrameSize = readInt(compressedBuffer.begin(), state-> nextFrameSize);
     } else {
-        nextFrameSize = 0;
+        state-> nextFrameSize = 0;
     }
 
     return (size_t) decompressedSize;
@@ -92,11 +128,6 @@ kj::ArrayPtr<kj::byte const> LZ4InputStream::tryGetReadBuffer() {
         bufferAvailable = decompressedBuffer.slice(0, n);
     }
     return bufferAvailable;
-}
-
-
-LZ4InputStream::~LZ4InputStream() {
-    if (stream != nullptr) LZ4_freeStreamDecode(stream);
 }
 
 

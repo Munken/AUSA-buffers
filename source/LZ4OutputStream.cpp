@@ -3,16 +3,23 @@
 
 #include <lz4.h>
 #include <lz4hc.h>
+#include <xxhash.h>
 #include <AUSA.h>
 
 using namespace std;
 
 using namespace AUSA::protobuf;
+using namespace AUSA::protobuf::LZ4;
 using namespace kj;
 
 namespace {
     void writeInt(byte* ptr, size_t number) {
         *((unsigned*) ptr) = static_cast<unsigned>(number);
+    }
+
+    template <class T>
+    void writeT(byte* ptr, T t) {
+        *((T*) ptr) = t;
     }
 }
 
@@ -128,11 +135,11 @@ void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
 
     auto compressedSize = state ->compress(static_cast<const char*>(src), destination, static_cast<int>(size));
 
-    uint64_t hash;
+    uint64_t hash = XXH64(src, size, 0);
     writeInt(outputBuffer.begin() + FRAME_SIZE_OFFSET, compressedSize);
-    writeInt(outputBuffer.begin() + FRAME_HASH_SIZE,   hash);
+    writeT<uint64_t>(outputBuffer.begin() + FRAME_HASH_OFFSET,   hash);
 
-    cout << compressedSize << endl;
+    cout << compressedSize << "\t" << hash << endl;
 
     inner.write(outputBuffer.begin(), compressedSize+FRAME_HEADER_SIZE);
 

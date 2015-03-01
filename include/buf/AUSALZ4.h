@@ -18,24 +18,27 @@
 
 namespace AUSA {
     namespace protobuf {
+        namespace LZ4 {
+            const uint32_t MAGIC_WORD = 0xA05A;
 
-        const uint32_t MAGIC_WORD = 0xA05A;
+            typedef uint32_t Size_t;
+            typedef uint64_t Hash_t;
 
-        const size_t MAGIC_WORD_SIZE = sizeof(MAGIC_WORD);
-        const size_t BUFFER_WORD_SIZE = sizeof(uint32_t);
-        const size_t HEADER_SIZE = MAGIC_WORD_SIZE + BUFFER_WORD_SIZE;
+            const size_t MAGIC_WORD_SIZE = sizeof(MAGIC_WORD);
+            const size_t BUFFER_WORD_SIZE = sizeof(Size_t);
+            const size_t HEADER_SIZE = MAGIC_WORD_SIZE + BUFFER_WORD_SIZE;
 
-        const size_t MAGIC_WORD_OFFSET = 0;
-        const size_t BUFFER_OFFSET = MAGIC_WORD_SIZE;
-        const size_t FIRST_FRAME_OFFSET = HEADER_SIZE;
+            const size_t MAGIC_WORD_OFFSET = 0;
+            const size_t BUFFER_OFFSET = MAGIC_WORD_SIZE;
+            const size_t FIRST_FRAME_OFFSET = HEADER_SIZE;
 
-        const size_t FRAME_SIZE_SIZE = sizeof(uint32_t);
-        const size_t FRAME_HASH_SIZE = sizeof(uint64_t);
+            const size_t FRAME_SIZE_SIZE = sizeof(Size_t);
+            const size_t FRAME_HASH_SIZE = sizeof(Hash_t);
 
-        const size_t FRAME_SIZE_OFFSET = 0;
-        const size_t FRAME_HASH_OFFSET = FRAME_SIZE_SIZE;
-        const size_t FRAME_HEADER_SIZE = FRAME_HASH_SIZE + FRAME_SIZE_SIZE;
-        const size_t FRAME_DATA_OFFSET = FRAME_HEADER_SIZE;
+            const size_t FRAME_SIZE_OFFSET = 0;
+            const size_t FRAME_HASH_OFFSET = FRAME_SIZE_SIZE;
+            const size_t FRAME_HEADER_SIZE = FRAME_HASH_SIZE + FRAME_SIZE_SIZE;
+        }
     }
 }
 
