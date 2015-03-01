@@ -26,7 +26,7 @@ namespace {
 class LZ4InputStream::StreamState {
 public:
     LZ4_streamDecode_t* stream;
-    LZ4::Size_t nextFrameSize;
+    LZ4::BufferSize_t nextFrameSize;
     LZ4::Hash_t lastHash;
 
     StreamState() {
