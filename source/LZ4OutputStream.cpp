@@ -19,14 +19,19 @@ namespace {
 }
 
 struct LZ4OutputStream::StreamState {
-    LZ4_stream_t* fast;
-    LZ4_streamHC_t* hc;
-
     LZ4CompressionLevel level;
 
-    ~StreamState() {
-        if (fast) LZ4_freeStream(fast);
-        if (hc) LZ4_freeHC(hc);
+    typedef std::unique_ptr<LZ4_stream_t, std::function<int(LZ4_stream_t*)>> StreamPointer;
+    typedef std::unique_ptr<LZ4_streamHC_t, std::function<int(LZ4_streamHC_t*)>> HCStreamPointer;
+
+    StreamPointer fast;
+    HCStreamPointer hc;
+
+    StreamState(LZ4CompressionLevel level) : level(level) {
+        if (level == LZ4CompressionLevel::HIGH_COMPRESSION)
+            hc = HCStreamPointer(LZ4_createStreamHC(), LZ4_freeStreamHC);
+        else
+            fast = StreamPointer(LZ4_createStream(), LZ4_freeStream);
     }
 };
 
@@ -43,14 +48,7 @@ LZ4OutputStream::LZ4OutputStream(OutputStream &inner, LZ4CompressionLevel compre
     writeInt(bufferPos, BUFFER_SIZE+4);
     inner.write(bufferPos, sizeof(unsigned));
 
-    state = std::make_unique<StreamState>();
-    state ->level = compressionLevel;
-
-    if (state -> level == LZ4CompressionLevel::HIGH_COMPRESSION) {
-        state -> hc = LZ4_createStreamHC();
-    } else {
-        state -> fast = LZ4_createStream();
-    }
+    state = std::make_unique<StreamState>(compressionLevel);
 }
 
 
@@ -115,9 +113,9 @@ void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
 
 
     if (state->level == LZ4CompressionLevel::HIGH_COMPRESSION) {
-        compressedSize = LZ4_compressHC_continue(state->hc, castSource, destination, static_cast<int>(size));
+        compressedSize = LZ4_compressHC_continue(state->hc.get(), castSource, destination, static_cast<int>(size));
     } else {
-        compressedSize = LZ4_compress_continue(state->fast, castSource, destination, static_cast<int>(size));
+        compressedSize = LZ4_compress_continue(state->fast.get(), castSource, destination, static_cast<int>(size));
     }
 
     writeInt(outputBuffer.begin(), compressedSize);
