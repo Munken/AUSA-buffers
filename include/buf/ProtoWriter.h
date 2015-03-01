@@ -11,7 +11,8 @@ namespace AUSA {
         class
         ProtoWriter : public Match::AbstractCalibratedAnalyzer {
         public:
-            ProtoWriter(std::string path);
+            ProtoWriter(std::string path,
+                    LZ4CompressionLevel compressionLevel = LZ4CompressionLevel::DEFAULT , size_t chunkSize = 8 << 20);
             ~ProtoWriter();
 
             virtual void setup(Match::CalibratedSetupOutput const &output) override;

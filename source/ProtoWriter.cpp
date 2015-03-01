@@ -13,11 +13,11 @@ using namespace AUSA::Match;
 using namespace AUSA::protobuf;
 using namespace capnp;
 
-ProtoWriter::ProtoWriter(std::string path) :
+ProtoWriter::ProtoWriter(std::string path, LZ4CompressionLevel compressionLevel, size_t chunkSize) :
         fd(open(path.c_str(), O_RDWR|O_CREAT, 0664)) {
 
     fdStream = new kj::FdOutputStream(fd);
-    bufferedStream = new LZ4OutputStream(*fdStream);
+    bufferedStream = new LZ4OutputStream(*fdStream, compressionLevel, chunkSize);
     buffer = kj::heapArray<word>(50);
 
     // Nasty hack to zero output array.
