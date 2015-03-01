@@ -3,6 +3,7 @@
 #include <iostream>
 #include <xxhash.h>
 #include <lz4.h>
+#include <AUSA.h>
 
 using namespace AUSA::protobuf;
 using namespace AUSA::protobuf::LZ4;
@@ -58,6 +59,7 @@ LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
     auto bufferSize = readInt(tmpBuffer.begin(), BUFFER_OFFSET);
     auto decompressedSize = LZ4_COMPRESSBOUND(bufferSize) + FRAME_HEADER_SIZE;
 
+    state = make_unique<StreamState>();
     state-> nextFrameSize = readInt(tmpBuffer.begin(), FIRST_FRAME_OFFSET+FRAME_SIZE_OFFSET);
     state-> lastHash = readHash(tmpBuffer.begin(), FIRST_FRAME_OFFSET+FRAME_HASH_OFFSET);
 
@@ -131,3 +133,6 @@ kj::ArrayPtr<kj::byte const> LZ4InputStream::tryGetReadBuffer() {
 }
 
 
+LZ4InputStream::~LZ4InputStream() {
+
+}

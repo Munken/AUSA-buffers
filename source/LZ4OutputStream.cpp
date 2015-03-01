@@ -139,8 +139,6 @@ void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
     writeInt(outputBuffer.begin() + FRAME_SIZE_OFFSET, compressedSize);
     writeT<uint64_t>(outputBuffer.begin() + FRAME_HASH_OFFSET,   hash);
 
-    cout << compressedSize << "\t" << hash << endl;
-
     inner.write(outputBuffer.begin(), compressedSize+FRAME_HEADER_SIZE);
 
     // Switch buffer

@@ -10,6 +10,7 @@ namespace AUSA {
         class LZ4InputStream : public kj::BufferedInputStream {
         public:
             LZ4InputStream(InputStream& inner);
+            ~LZ4InputStream();
 
             virtual size_t tryRead(void *buffer, size_t minBytes, size_t maxBytes);
 
