@@ -1,7 +1,6 @@
 #include "buf/ProtoWriter.h"
 #include "buf/EventBuilder.h"
 #include "buf/HeaderBuilder.h"
-#include <buf/LZ4OutputStream.h>
 
 #include <fcntl.h>
 #include <capnp/serialize-packed.h>
@@ -18,7 +17,7 @@ ProtoWriter::ProtoWriter(std::string path) :
         fd(open(path.c_str(), O_RDWR|O_CREAT, 0664)) {
 
     fdStream = new kj::FdOutputStream(fd);
-    bufferedStream = new LZ4OutputStream(*fdStream, LZ4CompressionLevel::DEFAULT);
+    bufferedStream = new LZ4OutputStream(*fdStream);
     buffer = kj::heapArray<word>(50);
 
     // Nasty hack to zero output array.
@@ -39,6 +38,7 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 
 void ProtoWriter::terminate() {
     try {
+        bufferedStream ->flush();
         if (bufferedStream != nullptr) delete bufferedStream;
         if (fdStream != nullptr) delete fdStream;
         close(fd);

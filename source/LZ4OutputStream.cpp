@@ -1,4 +1,5 @@
 #include "buf/LZ4OutputStream.h"
+#include "buf/AUSALZ4.h"
 
 #include <lz4.h>
 #include <lz4hc.h>
@@ -13,7 +14,6 @@ namespace {
     void writeInt(byte* ptr, size_t number) {
         *((unsigned*) ptr) = static_cast<unsigned>(number);
     }
-
 }
 
 struct LZ4OutputStream::LZ4Wrapper {
@@ -49,7 +49,7 @@ public:
 };
 
 LZ4OutputStream::LZ4OutputStream(OutputStream &inner, LZ4CompressionLevel compressionLevel, size_t chunkSize) : BUFFER_SIZE(chunkSize), inner(inner) {
-    auto OUTPUT_SIZE = LZ4_COMPRESSBOUND(BUFFER_SIZE) + sizeof(unsigned);
+    auto OUTPUT_SIZE = LZ4_COMPRESSBOUND(BUFFER_SIZE) + FRAME_HEADER_SIZE;
 
     writeBuffer[0] = heapArray<byte>(BUFFER_SIZE);
     writeBuffer[1] = heapArray<byte>(BUFFER_SIZE);
@@ -58,8 +58,10 @@ LZ4OutputStream::LZ4OutputStream(OutputStream &inner, LZ4CompressionLevel compre
     activeBuffer = writeBuffer[0];
     bufferPos = activeBuffer.begin();
 
-    writeInt(bufferPos, BUFFER_SIZE+4);
-    inner.write(bufferPos, sizeof(unsigned));
+    // Write header
+    writeInt(bufferPos + MAGIC_WORD_OFFSET, MAGIC_WORD);
+    writeInt(bufferPos + BUFFER_OFFSET,     BUFFER_SIZE);
+    inner.write(bufferPos, HEADER_SIZE);
 
     state = std::make_unique<LZ4Wrapper>(compressionLevel);
 }
@@ -122,13 +124,19 @@ void LZ4OutputStream::flush() {
 }
 
 void LZ4OutputStream::compressAndWrite(const void *src, size_t size) {
-    char*destination = reinterpret_cast<char*>(outputBuffer.begin() + sizeof(unsigned));
+    char* destination = reinterpret_cast<char*>(outputBuffer.begin() + FRAME_HEADER_SIZE);
 
     auto compressedSize = state ->compress(static_cast<const char*>(src), destination, static_cast<int>(size));
 
-    writeInt(outputBuffer.begin(), compressedSize);
-    inner.write(outputBuffer.begin(), compressedSize+sizeof(unsigned));
+    uint64_t hash;
+    writeInt(outputBuffer.begin() + FRAME_SIZE_OFFSET, compressedSize);
+    writeInt(outputBuffer.begin() + FRAME_HASH_SIZE,   hash);
 
+    cout << compressedSize << endl;
+
+    inner.write(outputBuffer.begin(), compressedSize+FRAME_HEADER_SIZE);
+
+    // Switch buffer
     activeBuffer = (activeBuffer == writeBuffer[0]) ? writeBuffer[1] : writeBuffer[0];
 }
 

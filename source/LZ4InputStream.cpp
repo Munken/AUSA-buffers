@@ -1,7 +1,5 @@
-#include <glob.h>
-#include <kj/common.h>
-#include <lz4frame.h>
 #include "buf/LZ4InputStream.h"
+#include "buf/AUSALZ4.h"
 
 #include <iostream>
 
@@ -10,33 +8,29 @@ using namespace kj;
 using namespace std;
 
 namespace {
-    unsigned readInt(byte* ptr) {
-        return *((unsigned*) ptr);
+    unsigned readInt(byte* ptr, size_t offset) {
+        return *((unsigned*) (ptr + offset));
     }
-
-    auto UNSIGNED_SIZE = 4U;
-    auto HEADER_SIZE = 2U*UNSIGNED_SIZE;
-    auto FRAME_HEADER_SIZE = 1U*UNSIGNED_SIZE;
 
     size_t readSize(size_t compressedSize) {
         return compressedSize + FRAME_HEADER_SIZE;
     }
-
 }
 
 LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
-    auto tmpBuffer = heapArray<byte>(HEADER_SIZE);
-    auto out = inner.tryRead(tmpBuffer.begin(), HEADER_SIZE, HEADER_SIZE);
+    size_t initialHeaderSize = HEADER_SIZE + FRAME_HEADER_SIZE;
+    auto tmpBuffer = heapArray<byte>(initialHeaderSize);
+    auto out = inner.tryRead(tmpBuffer.begin(), initialHeaderSize, initialHeaderSize);
 
     if (out < HEADER_SIZE) {
         cerr << "Premature end of file !" << endl;
         throw;
     }
 
-    auto bufferSize = readInt(tmpBuffer.begin()) + FRAME_HEADER_SIZE;
-    auto decompressedSize = LZ4_COMPRESSBOUND(bufferSize);
+    auto bufferSize = readInt(tmpBuffer.begin(), BUFFER_OFFSET);
+    auto decompressedSize = LZ4_COMPRESSBOUND(bufferSize) + FRAME_HEADER_SIZE;
 
-    nextFrameSize = readInt(tmpBuffer.begin() + FRAME_HEADER_SIZE);
+    nextFrameSize = readInt(tmpBuffer.begin(), FIRST_FRAME_OFFSET+FRAME_SIZE_OFFSET);
 
     stream = LZ4_createStreamDecode();
 
@@ -51,9 +45,8 @@ size_t LZ4InputStream::readCompressed() {
     auto decompressedSize = LZ4_decompress_safe_continue(stream, (char const *) compressedBuffer.begin(), (char *) decompressedBuffer.begin(), nextFrameSize, (int) decompressedBuffer.size());
 
     if (compressedSize == readSize(nextFrameSize)) {
-        nextFrameSize = readInt(compressedBuffer.begin() + nextFrameSize);
-    }
-    else {
+        nextFrameSize = readInt(compressedBuffer.begin(), nextFrameSize);
+    } else {
         nextFrameSize = 0;
     }
 
@@ -95,7 +88,6 @@ size_t LZ4InputStream::tryRead(void *dst, size_t minBytes, size_t maxBytes) {
 
 kj::ArrayPtr<kj::byte const> LZ4InputStream::tryGetReadBuffer() {
     if (bufferAvailable.size() == 0) {
-//        size_t n = inner.tryRead(decompressedBuffer.begin(), 1, decompressedBuffer.size());
         size_t n = readCompressed();
         bufferAvailable = decompressedBuffer.slice(0, n);
     }
