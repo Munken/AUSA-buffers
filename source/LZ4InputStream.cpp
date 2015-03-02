@@ -44,11 +44,6 @@ LZ4InputStream::LZ4InputStream(InputStream &inner) : inner(inner) {
     auto tmpBuffer = heapArray<byte>(initialHeaderSize);
     auto out = inner.tryRead(tmpBuffer.begin(), initialHeaderSize, initialHeaderSize);
 
-    if (out < HEADER_SIZE) {
-        cerr << "Premature end of file !" << endl;
-        throw;
-    }
-
     uint32_t magic = readInt(tmpBuffer.begin(), MAGIC_WORD_OFFSET);
     if (magic != MAGIC_WORD) {
         cerr << "First 32 bits are not " << MAGIC_WORD << "." << endl
@@ -73,13 +68,13 @@ size_t LZ4InputStream::readCompressed() {
     auto compressedSize = inner.tryRead(compressedBuffer.begin(), state-> nextFrameSize, readSize(state-> nextFrameSize));
     auto decompressedSize = LZ4_decompress_safe_continue(state-> stream, (char const *) compressedBuffer.begin(), (char *) decompressedBuffer.begin(), state-> nextFrameSize, (int) decompressedBuffer.size());
 
-//    auto hash = XXH64(decompressedBuffer.begin(), decompressedSize, 0);
+    auto hash = XXH64(decompressedBuffer.begin(), decompressedSize, 0);
 
-//    if (hash != state-> lastHash) {
-//        cerr << "Hash value of chunk don't correspond to recorded value." << endl
-//             << "This is most likely due to data corruption!" << endl;
-//        throw;
-//    }
+    if (hash != state-> lastHash) {
+        cerr << "Hash value of chunk don't correspond to recorded value." << endl
+             << "This is most likely due to data corruption!" << endl;
+        throw;
+    }
 
     state-> lastHash = readHash(compressedBuffer.begin(), state-> nextFrameSize + FRAME_HASH_OFFSET);
     if (compressedSize == readSize(state-> nextFrameSize)) {
@@ -93,7 +88,7 @@ size_t LZ4InputStream::readCompressed() {
 
 
 size_t LZ4InputStream::tryRead(void *dst, size_t minBytes, size_t maxBytes) {
-    if (minBytes <= bufferAvailable.size()) {
+    if (KJ_LIKELY(minBytes <= bufferAvailable.size())) {
         // Serve from current buffer.
         size_t n = std::min(bufferAvailable.size(), maxBytes);
         memcpy(dst, bufferAvailable.begin(), n);

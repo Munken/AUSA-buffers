@@ -77,7 +77,7 @@ LZ4OutputStream::LZ4OutputStream(OutputStream &inner, LZ4CompressionLevel compre
 void LZ4OutputStream::write(const void *src, size_t size) {
     // If ever trouble. This is taken more or less from BufferedOutputStreamWrapper from capn proto
 
-    if (src == bufferPos) {
+    if (KJ_LIKELY(src == bufferPos)) {
         // Oh goody, the caller wrote directly into our buffer.
         bufferPos += size;
     }

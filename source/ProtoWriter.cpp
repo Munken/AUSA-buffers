@@ -53,6 +53,8 @@ void ProtoWriter::terminate() {
 void ProtoWriter::analyze() {
     MallocMessageBuilder builder{buffer};
     buildEvent(builder, output);
+
+
 //    auto p = builder.getSegmentsForOutput();
     // Size of message can be determined from p[0].size() if message have only one segment.
 //    writePackedMessage(*bufferedStream, builder);
