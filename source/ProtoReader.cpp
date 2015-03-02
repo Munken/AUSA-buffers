@@ -7,6 +7,7 @@
 #include <kj/io.h>
 #include <kj/array.h>
 #include <capnp/serialize-packed.h>
+#include <capnp/message.h>
 #include <buf/PackedEvent.capn.h>
 
 #include <setup/Setup.h>
@@ -62,7 +63,7 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
 
     Output::GenericProvider<CalibratedAnalyzer> provider;
 
-    provider.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
+//    provider.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
 
     int fd = open(path.c_str(), O_RDONLY);
 
@@ -75,7 +76,7 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
     LZ4InputStream bufferedStream(fdStream);
 
     if (bufferedStream.tryGetReadBuffer() != nullptr) {
-        ::capnp::PackedMessageReader message(bufferedStream);
+        ::capnp::InputStreamMessageReader message(bufferedStream);
 
         auto header = message.getRoot<Header>();
 
@@ -90,12 +91,12 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
 
 
     capnp::ReaderOptions op;
-    vector<capnp::word> scratch;
-    kj::ArrayPtr<capnp::word> ptr(scratch.data(), scratch.data()+scratch.size());
+    vector<capnp::word> scratch(1024);
+    kj::ArrayPtr<capnp::word> ptr(scratch.data(), scratch.size());
 
     int t = 0;
-    while (bufferedStream.tryGetReadBuffer() != nullptr && t<100) {
-        ::capnp::PackedMessageReader message(bufferedStream, op, ptr);
+    while (bufferedStream.tryGetReadBuffer() != nullptr) {
+        ::capnp::InputStreamMessageReader message(bufferedStream, op, ptr);
 
         auto evt = message.getRoot<PackedEvent>();
         auto mul = evt.getMul();

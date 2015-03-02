@@ -33,7 +33,8 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 
     MallocMessageBuilder builder;
     buildHeader(builder, output);
-    writePackedMessage(*bufferedStream, builder);
+//    writePackedMessage(*bufferedStream, builder);
+    writeMessage(*bufferedStream, builder);
 }
 
 void ProtoWriter::terminate() {
@@ -53,7 +54,8 @@ void ProtoWriter::analyze() {
     buildEvent(builder, output);
 //    auto p = builder.getSegmentsForOutput();
     // Size of message can be determined from p[0].size() if message have only one segment.
-    writePackedMessage(*bufferedStream, builder);
+//    writePackedMessage(*bufferedStream, builder);
+    writeMessage(*bufferedStream, builder);
 }
 
 
