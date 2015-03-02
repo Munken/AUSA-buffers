@@ -9,7 +9,7 @@ struct PackedEvent {
 }
 
 struct Data {
-    energy @0 : Float64;
+    energy @0 : Float32;
     strip  @1 : UInt8;
     time   @2 : UInt16;
 }

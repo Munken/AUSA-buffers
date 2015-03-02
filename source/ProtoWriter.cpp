@@ -18,7 +18,7 @@ ProtoWriter::ProtoWriter(std::string path, LZ4CompressionLevel compressionLevel,
 
     fdStream = new kj::FdOutputStream(fd);
     bufferedStream = new LZ4OutputStream(*fdStream, compressionLevel, chunkSize);
-    buffer = kj::heapArray<word>(50);
+    buffer = kj::heapArray<word>(20);
 
     // Nasty hack to zero output array.
     std::fill(reinterpret_cast<uint64_t*>(buffer.begin()), reinterpret_cast<uint64_t*>(buffer.end()), 0);
@@ -36,6 +36,7 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
 //    writePackedMessage(*bufferedStream, builder);
     writeMessage(*bufferedStream, builder);
 }
+
 
 void ProtoWriter::terminate() {
     try {
