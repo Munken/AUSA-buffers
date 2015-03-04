@@ -54,6 +54,8 @@ ProtoReader::ProtoReader(std::string path, std::shared_ptr<Setup> setup) :
         dCount(setup -> dssdCount()) , sCount(setup -> singleCount()), sigCount(setup ->signalCount()), path(path)
 {
     createOutput(output, *setup);
+
+    // TODO: One should probably read the headers here
 }
 
 void ProtoReader::run() {

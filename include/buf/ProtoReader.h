@@ -8,12 +8,21 @@
 
 namespace AUSA {
     namespace protobuf {
+
+        /**
+        * The AUSA buffer equivalent to MatchReader.
+        *
+        * Reads in a file and notifies the attached analyzers.
+        */
         class ProtoReader : public Match::AbstractCalibratedProvider {
         public:
             ProtoReader(std::string path, std::shared_ptr<Setup> setup);
 
 //            void add(std::string path);
 
+            /**
+            * Gentlemen start your engines.
+            */
             void run();
 
             /**

@@ -8,11 +8,24 @@
 
 namespace AUSA {
     namespace protobuf {
-        class
-        ProtoWriter : public Match::AbstractCalibratedAnalyzer {
+
+        /**
+        * Analyzer that takes a stream of events and writes them to a AUSA buffer file.
+        *
+        * Internally it uses a LZ4OutputStream to write compressed data to a file.
+        */
+        class ProtoWriter : public Match::AbstractCalibratedAnalyzer {
         public:
+
+            /**
+            * Create a ProtoWriter that will write to the specified file.
+            *
+            * Data is written chunks which size in bytes is specified by chunkSize.
+            *
+            * The default compression = fast.
+            */
             ProtoWriter(std::string path,
-                    LZ4CompressionLevel compressionLevel = LZ4CompressionLevel::DEFAULT , size_t chunkSize = 20 << 20);
+                    LZ4CompressionLevel compressionLevel = LZ4CompressionLevel::DEFAULT , size_t chunkSize = 50 << 20 /*50MB*/);
             ~ProtoWriter();
 
             virtual void setup(Match::CalibratedSetupOutput const &output) override;

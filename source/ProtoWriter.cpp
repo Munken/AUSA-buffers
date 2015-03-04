@@ -13,7 +13,7 @@ using namespace AUSA::protobuf;
 using namespace capnp;
 
 ProtoWriter::ProtoWriter(std::string path, LZ4CompressionLevel compressionLevel, size_t chunkSize) :
-        fd(open(path.c_str(), O_RDWR|O_CREAT, 0664)) {
+        fd(open(path.c_str(), O_RDWR|O_CREAT|O_TRUNC, 0664)) {
 
     fdStream = new kj::FdOutputStream(fd);
     bufferedStream = new LZ4OutputStream(*fdStream, compressionLevel, chunkSize);
@@ -25,7 +25,14 @@ ProtoWriter::ProtoWriter(std::string path, LZ4CompressionLevel compressionLevel,
 }
 
 ProtoWriter::~ProtoWriter() {
-
+    try {
+        if (bufferedStream != nullptr) delete bufferedStream;
+        if (fdStream != nullptr) delete fdStream;
+        close(fd);
+    }
+    catch (...) {
+        cerr << "Big trouble deleting ProtoWriter" << endl;
+    }
 }
 
 void ProtoWriter::setup(const CalibratedSetupOutput &output) {
@@ -37,18 +44,8 @@ void ProtoWriter::setup(const CalibratedSetupOutput &output) {
     writeMessage(*bufferedStream, builder);
 }
 
-size_t ___max = 0;
 void ProtoWriter::terminate() {
-    try {
-        cout << ___max << endl;
-        bufferedStream ->flush();
-        if (bufferedStream != nullptr) delete bufferedStream;
-        if (fdStream != nullptr) delete fdStream;
-        close(fd);
-    }
-    catch (...) {
-        cerr << "Big trouble deleting ProtoWriter" << endl;
-    }
+    bufferedStream ->flush();
 }
 
 void ProtoWriter::analyze() {

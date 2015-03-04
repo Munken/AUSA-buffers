@@ -5,6 +5,7 @@
 #include "buf/ProtoReader.h"
 
 #include <match/analyzer/SegmentSpectrumPlotter.h>
+#include <buf/ProtoWriter.h>
 
 void bufTest();
 
@@ -25,17 +26,17 @@ void bufTest() {
 //
 //        start = std::clock();
 
-//        MatchReader reader("../Na23ap/matched/NaCla926_0m.root", s);
-//        reader.attach(make_shared<ProtoWriter>("test_926.buf", LZ4CompressionLevel::FAST, 20 << 20));
-//////        reader.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
-//        reader.run();
+        MatchReader reader("../Na23ap/matched/NaCla926_0m.root", s);
+        reader.attach(make_shared<ProtoWriter>("test_953_float_P.buf", LZ4CompressionLevel::FAST, 20 << 20));
+////        reader.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
+        reader.run();
 ////        return;
 
 //        test("test_953_float.buf", s);
-        ProtoReader reader("test_926.buf", s);
-        reader.attach(make_shared<SegmentSpectrumPlotter>(0,5000));
-        reader.run();
-        reader.saveToRootFile("test.root");
+//        ProtoReader reader("test_926.buf", s);
+//        reader.attach(make_shared<SegmentSpectrumPlotter>(0,5000));
+//        reader.run();
+//        reader.saveToRootFile("test.root");
 ////        test("test_953_NP.buf", s);
 //        int N = 8;
 //////        for (int i = 0; i < N; i++)

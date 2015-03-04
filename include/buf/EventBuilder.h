@@ -5,6 +5,10 @@
 
 namespace AUSA {
     namespace protobuf {
+
+        /**
+        * Given a event. Construct a PackedEvent in the MessageBuilder.
+        */
         void buildEvent(capnp::MessageBuilder& builder, const Match::SetupOutput& output);
     }
 }

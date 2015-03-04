@@ -7,6 +7,10 @@
 
 namespace AUSA {
     namespace protobuf {
+
+        /**
+        * Implementation of a kj::BufferedInputStream that will decompress a file written by LZ4OutputStream.
+        */
         class LZ4InputStream : public kj::BufferedInputStream {
         public:
             LZ4InputStream(InputStream& inner);

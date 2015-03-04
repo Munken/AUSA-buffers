@@ -11,6 +11,9 @@ namespace AUSA {
             DEFAULT, FAST, HIGH_COMPRESSION
         };
 
+        /**
+        * Implementation of a kj::BufferedOutputStream that compresses the output using <a href="https://code.google.com/p/lz4/">LZ4</a>.
+        */
         class LZ4OutputStream : public kj::BufferedOutputStream {
         public:
 
@@ -18,7 +21,7 @@ namespace AUSA {
             * Construct an output stream that will be LZ4 compressed on the fly.
             * With the default parameters it will use the fast LZ4 compression and a chunk size of 8 MB.
             */
-            explicit LZ4OutputStream(kj::OutputStream &inner, LZ4CompressionLevel compressionLevel = LZ4CompressionLevel::DEFAULT , size_t chunkSize = 8 << 20 /*8 MB*/);
+            explicit LZ4OutputStream(kj::OutputStream &inner, LZ4CompressionLevel compressionLevel = LZ4CompressionLevel::DEFAULT , size_t chunkSize = 20 << 20 /*8 MB*/);
 
             /**
             * This will flush the output to the underlying output stream.

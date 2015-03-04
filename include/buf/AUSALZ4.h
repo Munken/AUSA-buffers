@@ -3,20 +3,21 @@
 
 #include <stdint.h>
 
-/**
-* This document outlines the layout of a AUSAbuf LZ4 compressed frame.
-* A file will consist of a starting 32 bit magic word.
-* This is followed by a 32 bit integer indicating the buffer size for the uncompressed data.
-*
-* This is then followed by a unspecified number of frames.
-*
-* A frame will consist of:
-* 32 bit integer entailing the size of the frame.
-* 64 bit hash value of the uncompressed data.
-* This amount of bits which is compressed capn proto messages.
-*/
+
 
 namespace AUSA {
+    /**
+    * This document outlines the layout of a AUSAbuf LZ4 compressed frame.
+    * A file will consist of a starting 32 bit magic word.
+    * This is followed by a 32 bit integer indicating the buffer size for the uncompressed data.
+    *
+    * This is then followed by a unspecified number of frames.
+    *
+    * A frame will consist of:
+    * 32 bit integer entailing the size of the frame.
+    * 64 bit hash value of the uncompressed data.
+    * This amount of bits which is compressed capn proto messages.
+    */
     namespace protobuf {
         namespace LZ4 {
             const uint32_t MAGIC_WORD = 0xA05A;

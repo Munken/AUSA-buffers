@@ -10,6 +10,10 @@
 
 namespace AUSA {
     namespace protobuf {
+
+        /**
+        * Given a reference to a GenericSetupOutput build a AUSA buffer header.
+        */
         template <class Single, class Double, class Signal>
         void buildHeader(capnp::MessageBuilder& builder, const ::AUSA::Output::GenericSetupOutput<Single, Double, Signal>& output) {
             auto header = builder.initRoot<Header>();
