@@ -1,8 +1,6 @@
 #include "buf/PackedEvent.capn.h"
 #include "buf/EventBuilder.h"
 
-#include <iostream>
-#include <utility>
 using namespace std;
 
 using namespace AUSA::protobuf;

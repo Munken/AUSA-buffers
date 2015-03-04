@@ -2,20 +2,11 @@
 #include "buf/Header.capn.h"
 
 #include <iostream>
-#include <vector>
 #include <fcntl.h>
-#include <kj/io.h>
-#include <kj/array.h>
 #include <capnp/serialize-packed.h>
-#include <capnp/message.h>
 #include <buf/PackedEvent.capn.h>
 
-#include <setup/Setup.h>
-#include <match/output.h>
-#include <output/GenericProvider.h>
-#include <match/analyzer/CalibratedAnalyzer.h>
 #include <AUSA.h>
-#include <match/analyzer/SegmentSpectrumPlotter.h>
 #include <buf/LZ4InputStream.h>
 
 using namespace AUSA::protobuf;
