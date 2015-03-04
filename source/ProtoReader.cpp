@@ -20,6 +20,7 @@
 
 using namespace AUSA::protobuf;
 using namespace AUSA::Match;
+using namespace AUSA;
 using namespace std;
 
 namespace {
@@ -28,73 +29,55 @@ namespace {
         uint16_t t = reader.getTime();
         uint8_t segment = reader.getStrip();
 
-//        cout << output.detector().getName() << "\t" << energy << "\t" << to_string(t) << "\t" << to_string(segment) << endl;
-
         output.setEnergy(out, energy);
         output.setTime(out, t);
         output.setSegment(out, segment);
     }
+
+    void createOutput(SetupOutput& output, Setup& setup) {
+        const auto dCount = setup.dssdCount();
+        const auto sCount = setup.singleCount();
+        const auto sigCount = setup.signalCount();
+        for (size_t i = 0; i < dCount; i++) {
+            auto d = setup.getDSSD(i);
+            CalibratedOutput front(d, d->frontStripCount());
+            CalibratedOutput back(d, d->backStripCount());
+            output.addDssdOutput(CalibratedDoubleOutput(d, front, back));
+        }
+
+
+        for (size_t i = 0; i < sCount; i++) {
+            auto d = setup.getSingleSided(i);
+            CalibratedSingleOutput singleOutput = CalibratedSingleOutput(d, d -> segmentCount());
+            singleOutput.setMultiplicity(0);
+            output.addSingleOutput(singleOutput);
+        }
+
+        for (int i = 0; i < sigCount; i++) {
+            output.addScalerOutput(CalibratedSignal{make_unique<UInt_t>(), setup.getScaler().getChannelName(i)});
+        }
+    }
 }
 
-void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
+ProtoReader::ProtoReader(std::string path, std::shared_ptr<Setup> setup) :
+        dCount(setup -> dssdCount()) , sCount(setup -> singleCount()), sigCount(setup ->signalCount()), path(path)
+{
+    createOutput(output, *setup);
+}
 
-    SetupOutput output;
-    const auto dCount = setup ->dssdCount();
-    const auto sCount = setup ->singleCount();
-    const auto sigCount = setup ->signalCount();
-    for (size_t i = 0; i < dCount; i++) {
-        auto d = setup ->getDSSD(i);
-        CalibratedOutput front(d, d->frontStripCount());
-        CalibratedOutput back(d, d->backStripCount());
-        output.addDssdOutput(CalibratedDoubleOutput(d, front, back));
-    }
-
-
-    for (size_t i = 0; i < sCount; i++) {
-        auto d = setup ->getSingleSided(i);
-        CalibratedSingleOutput singleOutput = CalibratedSingleOutput(d, d -> segmentCount());
-        singleOutput.setMultiplicity(0);
-        output.addSingleOutput(singleOutput);
-    }
-
-    for (int i = 0; i < sigCount; i++) {
-        output.addScalerOutput(CalibratedSignal{make_unique<UInt_t>(), setup ->getScaler().getChannelName(i)});
-    }
-
-    Output::GenericProvider<CalibratedAnalyzer> provider;
-
-//    provider.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
-
-    int fd = open(path.c_str(), O_RDONLY);
-
-    auto N = 50;
-    capnp::byte* buffer = new capnp::byte[4096*N];
-    kj::ArrayPtr<capnp::byte> p(buffer, 4096*N);
-
-    kj::FdInputStream fdStream(fd);
-//    kj::BufferedInputStreamWrapper bufferedStream(fdStream, p);
+void ProtoReader::run() {
+    kj::FdInputStream fdStream(kj::AutoCloseFd(open(path.c_str(), O_RDONLY)));
     LZ4InputStream bufferedStream(fdStream);
 
     if (bufferedStream.tryGetReadBuffer() != nullptr) {
         ::capnp::InputStreamMessageReader message(bufferedStream);
-
         auto header = message.getRoot<Header>();
-
-//        auto doubles = header.getDoubles();
-//        for (auto d : doubles) {
-//            cout << d.getName(). << " (" << d.getFrontStrips() << ", " << d.getBackStrips() << endl;
-//        }
     }
 
-
     provider.notifySetup(output);
-
-
     capnp::ReaderOptions op;
-    vector<capnp::word> scratch(1024);
-    kj::ArrayPtr<capnp::word> ptr(scratch.data(), scratch.size());
+    kj::Array<capnp::word> ptr = kj::heapArray<capnp::word>(1024);
 
-    int t = 0;
     while (bufferedStream.tryGetReadBuffer() != nullptr) {
         ::capnp::InputStreamMessageReader message(bufferedStream, op, ptr);
 
@@ -104,6 +87,8 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
         auto sig = evt.getSignal();
         size_t count = 0;
 
+
+        // Read in DSSD data.
         for (size_t i = 0; i < dCount; i++) {
             const auto m = mul[i];
             auto& out = output.getDssdOutput(i);
@@ -115,11 +100,11 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
             for (uint8_t j = 0; j < m; j++) {
                 read(j, f, data[count]);
                 read(j, b, data[count+1]);
-//                cout << endl;
                 count+=2;
             }
         }
 
+        // Read in single data
         for (size_t i = 0; i < sCount; i++) {
             const auto m = mul[i+dCount];
             auto& f = output.getSingleOutput(i);
@@ -137,11 +122,17 @@ void ::AUSA::protobuf::test(std::string path, shared_ptr<Setup> setup) {
             }
         }
 
+        // Read in scalers.
         for (size_t i = 0; i < sigCount; i++) {
             output.getScalerOutput(i).setValue(sig[i]);
         }
+
         provider.notifyAnalyze();
     }
+
     provider.notifyTerminate();
-    provider.notifySaveRoot("cap.root", "RECREATE");
+}
+
+void ProtoReader::saveToRootFile(std::string filename, string options) {
+    AbstractCalibratedProvider::provider.notifySaveRoot(filename, options);
 }

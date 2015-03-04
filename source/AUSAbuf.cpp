@@ -1,14 +1,7 @@
 #include "buf/Header.capn.h"
 #include "match/MatchReader.h"
 #include "json/IO.h"
-#include <capnp/message.h>
-#include <capnp/serialize-packed.h>
-#include <iostream>
-#include <fcntl.h>
 #include <buf/ProtoWriter.h>
-
-#include "buf/HeaderBuilder.h"
-#include "match/output.h"
 
 #include "buf/ProtoReader.h"
 
@@ -17,19 +10,12 @@
 #include <buf/PackedEvent.capn.h>
 #include <match/analyzer/SegmentSpectrumPlotter.h>
 
-#include <lz4frame.h>
-#include <lz4.h>
 #include <buf/LZ4OutputStream.h>
 #include <buf/LZ4InputStream.h>
 #include <thread>
 
 void bufTest();
 
-void lz4Test();
-
-void messageTest();
-
-void messageComp();
 
 using namespace AUSA::protobuf;
 using namespace AUSA::Match;
@@ -47,14 +33,15 @@ void bufTest() {
 //
 //        start = std::clock();
 
-//        MatchReader reader("../Na23ap/matched/NaCla926_0m.root", s);
+        MatchReader reader("../Na23ap/matched/NaCla926_0m.root", s);
 //        reader.attach(make_shared<ProtoWriter>("test_926.buf", LZ4CompressionLevel::FAST, 20 << 20));
 ////        reader.attach(make_shared<SegmentSpectrumPlotter>(0, 5000));
-//        reader.run();
+        reader.run();
 //        return;
 
 //        test("test_953_float.buf", s);
-        test("test_926.buf", s);
+//        ProtoReader reader("test_926.buf", s);
+//        reader.run();
 ////        test("test_953_NP.buf", s);
 //        int N = 8;
 //////        for (int i = 0; i < N; i++)
