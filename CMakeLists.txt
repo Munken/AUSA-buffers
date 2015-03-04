@@ -29,3 +29,11 @@ add_library(xxhash external/source/xxhash.c)
 
 target_link_libraries(AUSAbuf xxhash capnp kj ${AUSA} ${ROOT_LIBRARIES} lz4)
 target_link_libraries(BufTest AUSAbuf)
+
+INSTALL(TARGETS AUSAbuf
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
+install(FILES ${HEADERS} DESTINATION include/buf)
