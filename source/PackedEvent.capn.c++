@@ -172,6 +172,8 @@ const ::capnp::_::RawSchema s_9efa7df5578f49f2 = {
 
 // =======================================================================================
 
+namespace AUSA {
+namespace buf {
 
 // PackedEvent
 #ifndef _MSC_VER
@@ -196,4 +198,6 @@ constexpr ::capnp::_::RawBrandedSchema const* Data::_capnpPrivate::brand;
 #endif  // !CAPNP_LITE
 
 
+}  // namespace
+}  // namespace
 

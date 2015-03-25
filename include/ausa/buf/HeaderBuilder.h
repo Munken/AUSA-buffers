@@ -9,7 +9,7 @@
 #include <memory>
 
 namespace AUSA {
-    namespace protobuf {
+    namespace buf {
 
         /**
         * Given a reference to a GenericSetupOutput build a AUSA buffer header.

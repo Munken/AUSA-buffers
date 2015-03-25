@@ -9,7 +9,7 @@
 using namespace std;
 
 using namespace AUSA::Match;
-using namespace AUSA::protobuf;
+using namespace AUSA::buf;
 using namespace capnp;
 
 ProtoWriter::ProtoWriter(std::string path, LZ4CompressionLevel compressionLevel, size_t chunkSize) :

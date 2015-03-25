@@ -8,7 +8,7 @@
 
 
 namespace AUSA {
-    namespace protobuf {
+    namespace buf {
 
         /**
         * Analyzer that takes a stream of events and writes them to a AUSA buffer file.

@@ -20,6 +20,8 @@ CAPNP_DECLARE_SCHEMA(9efa7df5578f49f2);
 }  // namespace schemas
 }  // namespace capnp
 
+namespace AUSA {
+namespace buf {
 
 struct PackedEvent {
   PackedEvent() = delete;
@@ -74,7 +76,7 @@ public:
   inline  ::capnp::List< ::uint8_t>::Reader getMul() const;
 
   inline bool hasData() const;
-  inline  ::capnp::List< ::Data>::Reader getData() const;
+  inline  ::capnp::List< ::AUSA::buf::Data>::Reader getData() const;
 
   inline bool hasSignal() const;
   inline  ::capnp::List< ::uint32_t>::Reader getSignal() const;
@@ -116,11 +118,11 @@ public:
   inline ::capnp::Orphan< ::capnp::List< ::uint8_t>> disownMul();
 
   inline bool hasData();
-  inline  ::capnp::List< ::Data>::Builder getData();
-  inline void setData( ::capnp::List< ::Data>::Reader value);
-  inline  ::capnp::List< ::Data>::Builder initData(unsigned int size);
-  inline void adoptData(::capnp::Orphan< ::capnp::List< ::Data>>&& value);
-  inline ::capnp::Orphan< ::capnp::List< ::Data>> disownData();
+  inline  ::capnp::List< ::AUSA::buf::Data>::Builder getData();
+  inline void setData( ::capnp::List< ::AUSA::buf::Data>::Reader value);
+  inline  ::capnp::List< ::AUSA::buf::Data>::Builder initData(unsigned int size);
+  inline void adoptData(::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>>&& value);
+  inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>> disownData();
 
   inline bool hasSignal();
   inline  ::capnp::List< ::uint32_t>::Builder getSignal();
@@ -286,29 +288,29 @@ inline bool PackedEvent::Reader::hasData() const {
 inline bool PackedEvent::Builder::hasData() {
   return !_builder.getPointerField(1 * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List< ::Data>::Reader PackedEvent::Reader::getData() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::get(
+inline  ::capnp::List< ::AUSA::buf::Data>::Reader PackedEvent::Reader::getData() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::get(
       _reader.getPointerField(1 * ::capnp::POINTERS));
 }
-inline  ::capnp::List< ::Data>::Builder PackedEvent::Builder::getData() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::get(
+inline  ::capnp::List< ::AUSA::buf::Data>::Builder PackedEvent::Builder::getData() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::get(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
-inline void PackedEvent::Builder::setData( ::capnp::List< ::Data>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::set(
+inline void PackedEvent::Builder::setData( ::capnp::List< ::AUSA::buf::Data>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::set(
       _builder.getPointerField(1 * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List< ::Data>::Builder PackedEvent::Builder::initData(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::init(
+inline  ::capnp::List< ::AUSA::buf::Data>::Builder PackedEvent::Builder::initData(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::init(
       _builder.getPointerField(1 * ::capnp::POINTERS), size);
 }
 inline void PackedEvent::Builder::adoptData(
-    ::capnp::Orphan< ::capnp::List< ::Data>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::adopt(
+    ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::adopt(
       _builder.getPointerField(1 * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List< ::Data>> PackedEvent::Builder::disownData() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::disown(
+inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>> PackedEvent::Builder::disownData() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::disown(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
 
@@ -390,5 +392,7 @@ inline void Data::Builder::setTime( ::uint16_t value) {
       3 * ::capnp::ELEMENTS, value);
 }
 
+}  // namespace
+}  // namespace
 
 #endif  // CAPNP_INCLUDED_d8bd5b35dc752245_

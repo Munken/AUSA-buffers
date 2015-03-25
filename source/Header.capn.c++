@@ -277,7 +277,7 @@ const ::capnp::_::RawSchema s_cf4244bb5449f267 = {
 // =======================================================================================
 
 namespace AUSA {
-namespace protobuf {
+namespace buf {
 
 // Header
 #ifndef _MSC_VER

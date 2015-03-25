@@ -8,8 +8,8 @@
 
 using namespace std;
 
-using namespace AUSA::protobuf;
-using namespace AUSA::protobuf::LZ4;
+using namespace AUSA::buf;
+using namespace AUSA::buf::LZ4;
 using namespace kj;
 
 namespace {

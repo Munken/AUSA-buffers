@@ -1,5 +1,8 @@
 @0xd8bd5b35dc752245;
 
+using Cxx = import "/capnp/c++.capnp";
+$Cxx.namespace("AUSA::buf");
+
 struct PackedEvent {
     mul @0 : List(UInt8);
 

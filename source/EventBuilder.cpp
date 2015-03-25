@@ -3,7 +3,7 @@
 
 using namespace std;
 
-using namespace AUSA::protobuf;
+using namespace AUSA::buf;
 using namespace AUSA::Match;
 
 namespace {
@@ -38,7 +38,7 @@ namespace {
     }
 }
 
-void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutput &output) {
+void AUSA::buf::buildEvent(capnp::MessageBuilder& builder, const SetupOutput &output) {
     auto event = builder.initRoot<PackedEvent>();
 
     auto mulList = event.initMul(output.dssdCount() + output.singleCount());

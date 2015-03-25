@@ -8,7 +8,7 @@
 #include <kj/io.h>
 
 namespace AUSA {
-    namespace protobuf {
+    namespace buf {
 
         /**
         * The AUSA buffer equivalent to MatchReader.

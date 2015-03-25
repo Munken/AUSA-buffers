@@ -4,7 +4,7 @@
 #include <capnp/message.h>
 
 namespace AUSA {
-    namespace protobuf {
+    namespace buf {
 
         /**
         * Given a event. Construct a PackedEvent in the MessageBuilder.

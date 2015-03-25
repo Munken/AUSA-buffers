@@ -1,7 +1,7 @@
 @0xdcd603dc2a8c780f;
 
 using Cxx = import "/capnp/c++.capnp";
-$Cxx.namespace("AUSA::protobuf");
+$Cxx.namespace("AUSA::buf");
 
 struct Header {
     doubles @0 : List(DoubleSided);

@@ -6,7 +6,7 @@
 #include <kj/io.h>
 
 namespace AUSA {
-    namespace protobuf {
+    namespace buf {
 
         /**
         * Implementation of a kj::BufferedInputStream that will decompress a file written by LZ4OutputStream.

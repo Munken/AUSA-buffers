@@ -10,7 +10,7 @@
 #include <capnp/serialize-packed.h>
 
 
-using namespace AUSA::protobuf;
+using namespace AUSA::buf;
 using namespace AUSA::Match;
 using namespace AUSA;
 using namespace std;

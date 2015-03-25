@@ -11,7 +11,7 @@
 void bufTest();
 
 
-using namespace AUSA::protobuf;
+using namespace AUSA::buf;
 using namespace AUSA::Match;
 using namespace std;
 using namespace capnp;

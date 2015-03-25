@@ -6,7 +6,7 @@
 
 
 namespace AUSA {
-    namespace protobuf {
+    namespace buf {
         enum class LZ4CompressionLevel {
             DEFAULT, FAST, HIGH_COMPRESSION
         };

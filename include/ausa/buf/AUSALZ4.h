@@ -17,7 +17,7 @@ namespace AUSA {
     * 64 bit hash value of the uncompressed data.
     * This amount of bits which is compressed capn proto messages.
     */
-    namespace protobuf {
+    namespace buf {
         namespace LZ4 {
             const uint32_t MAGIC_WORD = 0xA05A;
 
