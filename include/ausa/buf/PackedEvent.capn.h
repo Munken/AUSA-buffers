@@ -20,6 +20,8 @@ CAPNP_DECLARE_SCHEMA(9efa7df5578f49f2);
 }  // namespace schemas
 }  // namespace capnp
 
+namespace AUSA {
+namespace buf {
 
 struct PackedEvent {
   PackedEvent() = delete;
@@ -44,7 +46,7 @@ struct Data {
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(9efa7df5578f49f2, 2, 0)
+    CAPNP_DECLARE_STRUCT_HEADER(9efa7df5578f49f2, 1, 0)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand = &schema->defaultBrand;
     #endif  // !CAPNP_LITE
@@ -74,7 +76,7 @@ public:
   inline  ::capnp::List< ::uint8_t>::Reader getMul() const;
 
   inline bool hasData() const;
-  inline  ::capnp::List< ::Data>::Reader getData() const;
+  inline  ::capnp::List< ::AUSA::buf::Data>::Reader getData() const;
 
   inline bool hasSignal() const;
   inline  ::capnp::List< ::uint32_t>::Reader getSignal() const;
@@ -116,11 +118,11 @@ public:
   inline ::capnp::Orphan< ::capnp::List< ::uint8_t>> disownMul();
 
   inline bool hasData();
-  inline  ::capnp::List< ::Data>::Builder getData();
-  inline void setData( ::capnp::List< ::Data>::Reader value);
-  inline  ::capnp::List< ::Data>::Builder initData(unsigned int size);
-  inline void adoptData(::capnp::Orphan< ::capnp::List< ::Data>>&& value);
-  inline ::capnp::Orphan< ::capnp::List< ::Data>> disownData();
+  inline  ::capnp::List< ::AUSA::buf::Data>::Builder getData();
+  inline void setData( ::capnp::List< ::AUSA::buf::Data>::Reader value);
+  inline  ::capnp::List< ::AUSA::buf::Data>::Builder initData(unsigned int size);
+  inline void adoptData(::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>>&& value);
+  inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>> disownData();
 
   inline bool hasSignal();
   inline  ::capnp::List< ::uint32_t>::Builder getSignal();
@@ -173,7 +175,7 @@ public:
   }
 #endif  // !CAPNP_LITE
 
-  inline double getEnergy() const;
+  inline float getEnergy() const;
 
   inline  ::uint8_t getStrip() const;
 
@@ -207,8 +209,8 @@ public:
   inline ::kj::StringTree toString() const { return asReader().toString(); }
 #endif  // !CAPNP_LITE
 
-  inline double getEnergy();
-  inline void setEnergy(double value);
+  inline float getEnergy();
+  inline void setEnergy(float value);
 
   inline  ::uint8_t getStrip();
   inline void setStrip( ::uint8_t value);
@@ -286,29 +288,29 @@ inline bool PackedEvent::Reader::hasData() const {
 inline bool PackedEvent::Builder::hasData() {
   return !_builder.getPointerField(1 * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List< ::Data>::Reader PackedEvent::Reader::getData() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::get(
+inline  ::capnp::List< ::AUSA::buf::Data>::Reader PackedEvent::Reader::getData() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::get(
       _reader.getPointerField(1 * ::capnp::POINTERS));
 }
-inline  ::capnp::List< ::Data>::Builder PackedEvent::Builder::getData() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::get(
+inline  ::capnp::List< ::AUSA::buf::Data>::Builder PackedEvent::Builder::getData() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::get(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
-inline void PackedEvent::Builder::setData( ::capnp::List< ::Data>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::set(
+inline void PackedEvent::Builder::setData( ::capnp::List< ::AUSA::buf::Data>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::set(
       _builder.getPointerField(1 * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List< ::Data>::Builder PackedEvent::Builder::initData(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::init(
+inline  ::capnp::List< ::AUSA::buf::Data>::Builder PackedEvent::Builder::initData(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::init(
       _builder.getPointerField(1 * ::capnp::POINTERS), size);
 }
 inline void PackedEvent::Builder::adoptData(
-    ::capnp::Orphan< ::capnp::List< ::Data>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::adopt(
+    ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::adopt(
       _builder.getPointerField(1 * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List< ::Data>> PackedEvent::Builder::disownData() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::Data>>::disown(
+inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Data>> PackedEvent::Builder::disownData() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Data>>::disown(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
 
@@ -348,47 +350,49 @@ inline ::capnp::Orphan< ::capnp::List< ::uint32_t>> PackedEvent::Builder::disown
       _builder.getPointerField(2 * ::capnp::POINTERS));
 }
 
-inline double Data::Reader::getEnergy() const {
-  return _reader.getDataField<double>(
+inline float Data::Reader::getEnergy() const {
+  return _reader.getDataField<float>(
       0 * ::capnp::ELEMENTS);
 }
 
-inline double Data::Builder::getEnergy() {
-  return _builder.getDataField<double>(
+inline float Data::Builder::getEnergy() {
+  return _builder.getDataField<float>(
       0 * ::capnp::ELEMENTS);
 }
-inline void Data::Builder::setEnergy(double value) {
-  _builder.setDataField<double>(
+inline void Data::Builder::setEnergy(float value) {
+  _builder.setDataField<float>(
       0 * ::capnp::ELEMENTS, value);
 }
 
 inline  ::uint8_t Data::Reader::getStrip() const {
   return _reader.getDataField< ::uint8_t>(
-      8 * ::capnp::ELEMENTS);
+      4 * ::capnp::ELEMENTS);
 }
 
 inline  ::uint8_t Data::Builder::getStrip() {
   return _builder.getDataField< ::uint8_t>(
-      8 * ::capnp::ELEMENTS);
+      4 * ::capnp::ELEMENTS);
 }
 inline void Data::Builder::setStrip( ::uint8_t value) {
   _builder.setDataField< ::uint8_t>(
-      8 * ::capnp::ELEMENTS, value);
+      4 * ::capnp::ELEMENTS, value);
 }
 
 inline  ::uint16_t Data::Reader::getTime() const {
   return _reader.getDataField< ::uint16_t>(
-      5 * ::capnp::ELEMENTS);
+      3 * ::capnp::ELEMENTS);
 }
 
 inline  ::uint16_t Data::Builder::getTime() {
   return _builder.getDataField< ::uint16_t>(
-      5 * ::capnp::ELEMENTS);
+      3 * ::capnp::ELEMENTS);
 }
 inline void Data::Builder::setTime( ::uint16_t value) {
   _builder.setDataField< ::uint16_t>(
-      5 * ::capnp::ELEMENTS, value);
+      3 * ::capnp::ELEMENTS, value);
 }
 
+}  // namespace
+}  // namespace
 
 #endif  // CAPNP_INCLUDED_d8bd5b35dc752245_

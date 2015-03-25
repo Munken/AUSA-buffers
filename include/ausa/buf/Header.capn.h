@@ -23,7 +23,7 @@ CAPNP_DECLARE_SCHEMA(cf4244bb5449f267);
 }  // namespace capnp
 
 namespace AUSA {
-namespace protobuf {
+namespace buf {
 
 struct Header {
   Header() = delete;
@@ -105,13 +105,13 @@ public:
 #endif  // !CAPNP_LITE
 
   inline bool hasDoubles() const;
-  inline  ::capnp::List< ::AUSA::protobuf::DoubleSided>::Reader getDoubles() const;
+  inline  ::capnp::List< ::AUSA::buf::DoubleSided>::Reader getDoubles() const;
 
   inline bool hasSingles() const;
-  inline  ::capnp::List< ::AUSA::protobuf::SingleSided>::Reader getSingles() const;
+  inline  ::capnp::List< ::AUSA::buf::SingleSided>::Reader getSingles() const;
 
   inline bool hasSignals() const;
-  inline  ::capnp::List< ::AUSA::protobuf::Signal>::Reader getSignals() const;
+  inline  ::capnp::List< ::AUSA::buf::Signal>::Reader getSignals() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -142,25 +142,25 @@ public:
 #endif  // !CAPNP_LITE
 
   inline bool hasDoubles();
-  inline  ::capnp::List< ::AUSA::protobuf::DoubleSided>::Builder getDoubles();
-  inline void setDoubles( ::capnp::List< ::AUSA::protobuf::DoubleSided>::Reader value);
-  inline  ::capnp::List< ::AUSA::protobuf::DoubleSided>::Builder initDoubles(unsigned int size);
-  inline void adoptDoubles(::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::DoubleSided>>&& value);
-  inline ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::DoubleSided>> disownDoubles();
+  inline  ::capnp::List< ::AUSA::buf::DoubleSided>::Builder getDoubles();
+  inline void setDoubles( ::capnp::List< ::AUSA::buf::DoubleSided>::Reader value);
+  inline  ::capnp::List< ::AUSA::buf::DoubleSided>::Builder initDoubles(unsigned int size);
+  inline void adoptDoubles(::capnp::Orphan< ::capnp::List< ::AUSA::buf::DoubleSided>>&& value);
+  inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::DoubleSided>> disownDoubles();
 
   inline bool hasSingles();
-  inline  ::capnp::List< ::AUSA::protobuf::SingleSided>::Builder getSingles();
-  inline void setSingles( ::capnp::List< ::AUSA::protobuf::SingleSided>::Reader value);
-  inline  ::capnp::List< ::AUSA::protobuf::SingleSided>::Builder initSingles(unsigned int size);
-  inline void adoptSingles(::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::SingleSided>>&& value);
-  inline ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::SingleSided>> disownSingles();
+  inline  ::capnp::List< ::AUSA::buf::SingleSided>::Builder getSingles();
+  inline void setSingles( ::capnp::List< ::AUSA::buf::SingleSided>::Reader value);
+  inline  ::capnp::List< ::AUSA::buf::SingleSided>::Builder initSingles(unsigned int size);
+  inline void adoptSingles(::capnp::Orphan< ::capnp::List< ::AUSA::buf::SingleSided>>&& value);
+  inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::SingleSided>> disownSingles();
 
   inline bool hasSignals();
-  inline  ::capnp::List< ::AUSA::protobuf::Signal>::Builder getSignals();
-  inline void setSignals( ::capnp::List< ::AUSA::protobuf::Signal>::Reader value);
-  inline  ::capnp::List< ::AUSA::protobuf::Signal>::Builder initSignals(unsigned int size);
-  inline void adoptSignals(::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::Signal>>&& value);
-  inline ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::Signal>> disownSignals();
+  inline  ::capnp::List< ::AUSA::buf::Signal>::Builder getSignals();
+  inline void setSignals( ::capnp::List< ::AUSA::buf::Signal>::Reader value);
+  inline  ::capnp::List< ::AUSA::buf::Signal>::Builder initSignals(unsigned int size);
+  inline void adoptSignals(::capnp::Orphan< ::capnp::List< ::AUSA::buf::Signal>>&& value);
+  inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Signal>> disownSignals();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -454,29 +454,29 @@ inline bool Header::Reader::hasDoubles() const {
 inline bool Header::Builder::hasDoubles() {
   return !_builder.getPointerField(0 * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List< ::AUSA::protobuf::DoubleSided>::Reader Header::Reader::getDoubles() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::DoubleSided>>::get(
+inline  ::capnp::List< ::AUSA::buf::DoubleSided>::Reader Header::Reader::getDoubles() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::DoubleSided>>::get(
       _reader.getPointerField(0 * ::capnp::POINTERS));
 }
-inline  ::capnp::List< ::AUSA::protobuf::DoubleSided>::Builder Header::Builder::getDoubles() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::DoubleSided>>::get(
+inline  ::capnp::List< ::AUSA::buf::DoubleSided>::Builder Header::Builder::getDoubles() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::DoubleSided>>::get(
       _builder.getPointerField(0 * ::capnp::POINTERS));
 }
-inline void Header::Builder::setDoubles( ::capnp::List< ::AUSA::protobuf::DoubleSided>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::DoubleSided>>::set(
+inline void Header::Builder::setDoubles( ::capnp::List< ::AUSA::buf::DoubleSided>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::DoubleSided>>::set(
       _builder.getPointerField(0 * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List< ::AUSA::protobuf::DoubleSided>::Builder Header::Builder::initDoubles(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::DoubleSided>>::init(
+inline  ::capnp::List< ::AUSA::buf::DoubleSided>::Builder Header::Builder::initDoubles(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::DoubleSided>>::init(
       _builder.getPointerField(0 * ::capnp::POINTERS), size);
 }
 inline void Header::Builder::adoptDoubles(
-    ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::DoubleSided>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::DoubleSided>>::adopt(
+    ::capnp::Orphan< ::capnp::List< ::AUSA::buf::DoubleSided>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::DoubleSided>>::adopt(
       _builder.getPointerField(0 * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::DoubleSided>> Header::Builder::disownDoubles() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::DoubleSided>>::disown(
+inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::DoubleSided>> Header::Builder::disownDoubles() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::DoubleSided>>::disown(
       _builder.getPointerField(0 * ::capnp::POINTERS));
 }
 
@@ -486,29 +486,29 @@ inline bool Header::Reader::hasSingles() const {
 inline bool Header::Builder::hasSingles() {
   return !_builder.getPointerField(1 * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List< ::AUSA::protobuf::SingleSided>::Reader Header::Reader::getSingles() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::SingleSided>>::get(
+inline  ::capnp::List< ::AUSA::buf::SingleSided>::Reader Header::Reader::getSingles() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::SingleSided>>::get(
       _reader.getPointerField(1 * ::capnp::POINTERS));
 }
-inline  ::capnp::List< ::AUSA::protobuf::SingleSided>::Builder Header::Builder::getSingles() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::SingleSided>>::get(
+inline  ::capnp::List< ::AUSA::buf::SingleSided>::Builder Header::Builder::getSingles() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::SingleSided>>::get(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
-inline void Header::Builder::setSingles( ::capnp::List< ::AUSA::protobuf::SingleSided>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::SingleSided>>::set(
+inline void Header::Builder::setSingles( ::capnp::List< ::AUSA::buf::SingleSided>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::SingleSided>>::set(
       _builder.getPointerField(1 * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List< ::AUSA::protobuf::SingleSided>::Builder Header::Builder::initSingles(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::SingleSided>>::init(
+inline  ::capnp::List< ::AUSA::buf::SingleSided>::Builder Header::Builder::initSingles(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::SingleSided>>::init(
       _builder.getPointerField(1 * ::capnp::POINTERS), size);
 }
 inline void Header::Builder::adoptSingles(
-    ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::SingleSided>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::SingleSided>>::adopt(
+    ::capnp::Orphan< ::capnp::List< ::AUSA::buf::SingleSided>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::SingleSided>>::adopt(
       _builder.getPointerField(1 * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::SingleSided>> Header::Builder::disownSingles() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::SingleSided>>::disown(
+inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::SingleSided>> Header::Builder::disownSingles() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::SingleSided>>::disown(
       _builder.getPointerField(1 * ::capnp::POINTERS));
 }
 
@@ -518,29 +518,29 @@ inline bool Header::Reader::hasSignals() const {
 inline bool Header::Builder::hasSignals() {
   return !_builder.getPointerField(2 * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List< ::AUSA::protobuf::Signal>::Reader Header::Reader::getSignals() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::Signal>>::get(
+inline  ::capnp::List< ::AUSA::buf::Signal>::Reader Header::Reader::getSignals() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Signal>>::get(
       _reader.getPointerField(2 * ::capnp::POINTERS));
 }
-inline  ::capnp::List< ::AUSA::protobuf::Signal>::Builder Header::Builder::getSignals() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::Signal>>::get(
+inline  ::capnp::List< ::AUSA::buf::Signal>::Builder Header::Builder::getSignals() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Signal>>::get(
       _builder.getPointerField(2 * ::capnp::POINTERS));
 }
-inline void Header::Builder::setSignals( ::capnp::List< ::AUSA::protobuf::Signal>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::Signal>>::set(
+inline void Header::Builder::setSignals( ::capnp::List< ::AUSA::buf::Signal>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Signal>>::set(
       _builder.getPointerField(2 * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List< ::AUSA::protobuf::Signal>::Builder Header::Builder::initSignals(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::Signal>>::init(
+inline  ::capnp::List< ::AUSA::buf::Signal>::Builder Header::Builder::initSignals(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Signal>>::init(
       _builder.getPointerField(2 * ::capnp::POINTERS), size);
 }
 inline void Header::Builder::adoptSignals(
-    ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::Signal>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::Signal>>::adopt(
+    ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Signal>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Signal>>::adopt(
       _builder.getPointerField(2 * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List< ::AUSA::protobuf::Signal>> Header::Builder::disownSignals() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::protobuf::Signal>>::disown(
+inline ::capnp::Orphan< ::capnp::List< ::AUSA::buf::Signal>> Header::Builder::disownSignals() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::AUSA::buf::Signal>>::disown(
       _builder.getPointerField(2 * ::capnp::POINTERS));
 }
 

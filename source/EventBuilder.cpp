@@ -1,11 +1,9 @@
-#include "buf/PackedEvent.capn.h"
-#include "buf/EventBuilder.h"
+#include "ausa/buf/PackedEvent.capn.h"
+#include "ausa/buf/EventBuilder.h"
 
-#include <iostream>
-#include <utility>
 using namespace std;
 
-using namespace AUSA::protobuf;
+using namespace AUSA::buf;
 using namespace AUSA::Match;
 
 namespace {
@@ -24,11 +22,6 @@ namespace {
             sSum += m;
         }
 
-//        for (int i = 0; i < output.dssdCount()+output.singleCount(); i++) {
-//            cout << to_string(builder[i]) << "\t";
-//        }
-//        cout << endl;
-
         return make_pair(dSum, sSum);
     }
 
@@ -45,7 +38,7 @@ namespace {
     }
 }
 
-void AUSA::protobuf::buildEvent(capnp::MessageBuilder& builder, const SetupOutput &output) {
+void AUSA::buf::buildEvent(capnp::MessageBuilder& builder, const SetupOutput &output) {
     auto event = builder.initRoot<PackedEvent>();
 
     auto mulList = event.initMul(output.dssdCount() + output.singleCount());

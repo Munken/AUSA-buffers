@@ -1,10 +1,14 @@
 #ifndef BUF_EVENT_BUILDER_H
 #define BUF_EVENT_BUILDER_H
-#include <match/output.h>
+#include <ausa/match/output.h>
 #include <capnp/message.h>
 
 namespace AUSA {
-    namespace protobuf {
+    namespace buf {
+
+        /**
+        * Given a event. Construct a PackedEvent in the MessageBuilder.
+        */
         void buildEvent(capnp::MessageBuilder& builder, const Match::SetupOutput& output);
     }
 }

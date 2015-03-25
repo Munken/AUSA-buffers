@@ -1,5 +1,8 @@
 @0xd8bd5b35dc752245;
 
+using Cxx = import "/capnp/c++.capnp";
+$Cxx.namespace("AUSA::buf");
+
 struct PackedEvent {
     mul @0 : List(UInt8);
 
@@ -9,7 +12,7 @@ struct PackedEvent {
 }
 
 struct Data {
-    energy @0 : Float64;
+    energy @0 : Float32;
     strip  @1 : UInt8;
     time   @2 : UInt16;
 }
