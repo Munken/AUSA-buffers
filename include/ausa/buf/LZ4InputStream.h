@@ -1,9 +1,9 @@
 #ifndef BUF_LZ4_INPUT_STREAM_H
 #define BUF_LZ4_INPUT_STREAM_H
 
+#include "AUSALZ4.h"
 #include <memory>
 #include <kj/io.h>
-#include "AUSALZ4.h"
 
 namespace AUSA {
     namespace protobuf {

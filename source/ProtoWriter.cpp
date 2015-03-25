@@ -1,6 +1,6 @@
-#include "buf/ProtoWriter.h"
-#include "buf/EventBuilder.h"
-#include "buf/HeaderBuilder.h"
+#include "ausa/buf/ProtoWriter.h"
+#include "ausa/buf/EventBuilder.h"
+#include "ausa/buf/HeaderBuilder.h"
 
 #include <fcntl.h>
 #include <capnp/serialize-packed.h>

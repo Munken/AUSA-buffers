@@ -1,5 +1,5 @@
-#include "buf/PackedEvent.capn.h"
-#include "buf/EventBuilder.h"
+#include "ausa/buf/PackedEvent.capn.h"
+#include "ausa/buf/EventBuilder.h"
 
 using namespace std;
 

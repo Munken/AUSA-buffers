@@ -1,5 +1,5 @@
-#include "buf/LZ4OutputStream.h"
-#include "buf/AUSALZ4.h"
+#include "ausa/buf/LZ4OutputStream.h"
+#include "ausa/buf/AUSALZ4.h"
 
 #include <lz4.h>
 #include <lz4hc.h>

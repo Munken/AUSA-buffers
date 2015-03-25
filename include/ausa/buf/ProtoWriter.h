@@ -1,8 +1,9 @@
 #ifndef BUF_PROTO_WRITER_H
 #define BUF_PROTO_WRITER_H
 
-#include <ausa/match/analyzer/AbstractCalibratedAnalyzer.h>
 #include "LZ4OutputStream.h"
+
+#include <ausa/match/analyzer/AbstractCalibratedAnalyzer.h>
 #include <capnp/common.h>
 
 

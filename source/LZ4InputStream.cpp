@@ -1,4 +1,4 @@
-#include "buf/LZ4InputStream.h"
+#include "ausa/buf/LZ4InputStream.h"
 
 #include <iostream>
 #include <xxhash.h>

@@ -1,13 +1,14 @@
-#include "buf/ProtoReader.h"
-#include "buf/Header.capn.h"
+#include <ausa/AUSA.h>
+
+#include "ausa/buf/ProtoReader.h"
+#include "ausa/buf/Header.capn.h"
+#include "ausa/buf/PackedEvent.capn.h"
+#include "ausa/buf/LZ4InputStream.h"
 
 #include <iostream>
 #include <fcntl.h>
 #include <capnp/serialize-packed.h>
-#include <buf/PackedEvent.capn.h>
 
-#include <ausa/AUSA.h>
-#include <buf/LZ4InputStream.h>
 
 using namespace AUSA::protobuf;
 using namespace AUSA::Match;

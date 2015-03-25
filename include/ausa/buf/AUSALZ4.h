@@ -2,8 +2,7 @@
 #define BUF_AUSA_LZ4_H
 
 #include <stdint.h>
-
-
+#include <stddef.h>
 
 namespace AUSA {
     /**

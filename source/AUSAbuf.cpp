@@ -1,12 +1,12 @@
-#include "buf/Header.capn.h"
+#include "ausa/buf/Header.capn.h"
 #include "ausa/match/MatchReader.h"
 #include "ausa/json/IO.h"
 
-#include "buf/ProtoReader.h"
-#include "iostream"
+#include "ausa/buf/ProtoReader.h"
+#include <iostream>
 
 #include <ausa/match/analyzer/SegmentSpectrumPlotter.h>
-#include <buf/ProtoWriter.h>
+#include <ausa/buf/ProtoWriter.h>
 
 void bufTest();
 
