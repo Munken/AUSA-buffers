@@ -2,8 +2,8 @@
 #define BUF_HEADER_BUILDER_H
 
 #include "Header.capn.h"
-#include <output/GenericSetupOutput.h>
-#include <AUSA.h>
+#include <ausa/output/GenericSetupOutput.h>
+#include <ausa/AUSA.h>
 
 #include <capnp/message.h>
 #include <memory>

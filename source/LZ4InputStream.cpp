@@ -3,7 +3,7 @@
 #include <iostream>
 #include <xxhash.h>
 #include <lz4.h>
-#include <AUSA.h>
+#include <ausa/AUSA.h>
 
 using namespace AUSA::protobuf;
 using namespace AUSA::protobuf::LZ4;

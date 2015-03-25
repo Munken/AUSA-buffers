@@ -6,7 +6,7 @@
 #include <capnp/serialize-packed.h>
 #include <buf/PackedEvent.capn.h>
 
-#include <AUSA.h>
+#include <ausa/AUSA.h>
 #include <buf/LZ4InputStream.h>
 
 using namespace AUSA::protobuf;

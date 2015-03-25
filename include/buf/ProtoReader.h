@@ -1,9 +1,9 @@
 #ifndef BUF_PROTO_READER_H
 #define BUF_PROTO_READER_H
 
-#include <setup/Setup.h>
+#include <ausa/setup/Setup.h>
 #include <string>
-#include <match/analyzer/AbstractCalibratedProvider.h>
+#include <ausa/match/analyzer/AbstractCalibratedProvider.h>
 #include <kj/io.h>
 
 namespace AUSA {

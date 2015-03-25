@@ -1,10 +1,11 @@
 #include "buf/Header.capn.h"
-#include "match/MatchReader.h"
-#include "json/IO.h"
+#include "ausa/match/MatchReader.h"
+#include "ausa/json/IO.h"
 
 #include "buf/ProtoReader.h"
+#include "iostream"
 
-#include <match/analyzer/SegmentSpectrumPlotter.h>
+#include <ausa/match/analyzer/SegmentSpectrumPlotter.h>
 #include <buf/ProtoWriter.h>
 
 void bufTest();
@@ -15,9 +16,13 @@ using namespace AUSA::Match;
 using namespace std;
 using namespace capnp;
 
+const char *t[] = {"HEst", "Kost"};
 
 int main() {
-        bufTest();
+        t[0] = "Pest";
+        cout << t[0] << endl;
+
+//        bufTest();
 }
 
 void bufTest() {
