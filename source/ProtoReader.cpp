@@ -45,7 +45,7 @@ namespace {
             output.addSingleOutput(singleOutput);
         }
 
-        for (int i = 0; i < sigCount; i++) {
+        for (size_t i = 0; i < sigCount; i++) {
             output.addScalerOutput(CalibratedSignal{make_unique<UInt_t>(), setup.getScaler().getChannelName(i)});
         }
     }

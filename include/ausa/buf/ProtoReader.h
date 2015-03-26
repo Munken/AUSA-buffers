@@ -35,7 +35,7 @@ namespace AUSA {
 
         private:
             std::string path;
-            const int dCount, sCount, sigCount;
+            const size_t dCount, sCount, sigCount;
             Match::SetupOutput output;
         };
     }
